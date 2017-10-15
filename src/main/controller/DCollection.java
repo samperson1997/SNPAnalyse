@@ -1,4 +1,4 @@
-package main;
+package main.controller;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,6 +7,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import main.daoImpl.AnalyseDao;
+import main.serviceImpl.DataAc;
+import main.serviceImpl.DataDeal;
+import main.model.Analyse;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +35,8 @@ public class DCollection {
 		JSONObject jsonObject=null;
 		int start = 20;
 		int end = 10;
-		double tv1=0.6;  //È·ÈÏÎªË«·åµÄãÐÖµ
-		double tv2=0.5;  //ÒÉËÆÎªË«·åµÄãÐÖµ
+		double tv1=0.6;  //È·ï¿½ï¿½ÎªË«ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+		double tv2=0.5;  //ï¿½ï¿½ï¿½ï¿½ÎªË«ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 		
 		Map<String, String> dm=new HashMap<String, String>();
 		

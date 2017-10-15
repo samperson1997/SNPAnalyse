@@ -1,5 +1,7 @@
-package main;
+package main.daoImpl;
 
+import main.util.HibernateSessionFactory;
+import main.model.Dna;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -22,7 +24,7 @@ public class GeneDao {
 //	}
 	
 	public Dna searchGeneByType(String type){
-		Session session=HibernateSessionFactory.getSession();
+		Session session= HibernateSessionFactory.getSession();
 		Transaction tx=session.beginTransaction();
 		Dna dna=session.get(Dna.class,type);
 		tx.commit();

@@ -1,4 +1,8 @@
-package main;
+package main.serviceImpl;
+
+import main.daoImpl.AnalyseDao;
+import main.daoImpl.GeneDao;
+import main.model.Analyse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +12,7 @@ import java.util.Map;
 
 public class DataDeal {
 	
-	//½«ÒÉËÆË«·å±ê¼Ç³ÉË«·å
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½Ç³ï¿½Ë«ï¿½ï¿½
 	public void changeYsToYc(String filename,String ys){
 		
 		AnalyseDao analyseDao=new AnalyseDao();
@@ -88,7 +92,7 @@ public class DataDeal {
 		//int start_index=0;
 		int end=nums[nums.length-1];
 		//int end_index=nums.length-1;
-		//»ñµÃÁ¬ÐøË«·åµÄÆðµã
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		for(int j=0;j<nums.length-1;j++){
 			int n1=nums[j];
 			int n2=nums[j+1];
@@ -100,7 +104,7 @@ public class DataDeal {
 			}
 		}
 		
-		//»ñµÃÁ¬ÐøË«·åµÄ½áµã
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½Ä½ï¿½ï¿½
 		for(int m=nums.length-1;m>0;m--){
 			int n3=nums[m];
 			int n4=nums[m-1];
@@ -111,15 +115,15 @@ public class DataDeal {
 				break;
 			}
 		}
-		System.out.println("Á¬ÐøË«·å¿ªÊ¼´¦£º "+(start+1));
-		System.out.println("Á¬ÐøË«·å½áÊø´¦£º "+(end+1));
+		System.out.println("ï¿½ï¿½ï¿½ï¿½Ë«ï¿½å¿ªÊ¼ï¿½ï¿½ï¿½ï¿½ "+(start+1));
+		System.out.println("ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ "+(end+1));
 		String gs="";
 		
 		for(int h=start-10;h<start;h++){
 			gs+=locations[h];
 		}
 		
-		System.out.println("Á¬ÐøË«·å¿ªÊ¼Ç°10¸ö¼î»ù£º "+gs);
+		System.out.println("ï¿½ï¿½ï¿½ï¿½Ë«ï¿½å¿ªÊ¼Ç°10ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ "+gs);
 		String ck=new GeneDao().searchGeneByType("LPL").getSort();
 		ck=ck.toUpperCase();
 		int sindex=ck.indexOf(gs);

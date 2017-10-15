@@ -14,8 +14,8 @@
 	<property name="dialect">org.hibernate.dialect.MckoiDialect</property> 
     <property name="configurationClass">org.hibernate.cfg.AnnotationConfiguration</property>
     <property name="hibernate.show_sql">true</property><!-- 配置显示sql语句 -->
-    <mapping class="main.Analyse" />
-        <mapping class="main.Dna" />
+    <mapping class="main.model.Analyse" />
+        <mapping class="main.model.Dna" />
     
 </session-factory>
 

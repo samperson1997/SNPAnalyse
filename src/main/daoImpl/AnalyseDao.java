@@ -1,12 +1,14 @@
-package main;
+package main.daoImpl;
 
+import main.util.HibernateSessionFactory;
+import main.model.Analyse;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class AnalyseDao {
 	
 	public void saveAnalyseRes(Analyse analyse){
-		Session session=HibernateSessionFactory.getSession();
+		Session session= HibernateSessionFactory.getSession();
 		Transaction tx=session.beginTransaction();
 		session.saveOrUpdate(analyse);
 		tx.commit();
