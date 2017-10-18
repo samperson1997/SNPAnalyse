@@ -1,4 +1,5 @@
 package main.serviceImpl;
+
 import main.model.Directory;
 import main.model.Head;
 import main.util.MyFileReader;
@@ -22,11 +23,9 @@ public class DataAc {
 	private Directory[] directories;
 	private Map<String, String> dataMap;
 
-	
-	// private Document document;
+
 	public DataAc(String path) {
 
-		// document = DocumentHelper.createDocument();
 		try {
 			file = new MyFileReader(path, "rw");
 		} catch (FileNotFoundException e) {
@@ -35,13 +34,11 @@ public class DataAc {
 		}
 	}
 
+	/*读取文件头信息*/
 	public void getHead() {
 		head = new Head();
-		// document.setXMLEncoding("GBK");
-		// Element root = document.addElement("file");
-		// root.addElement("file_head");
+
 		try {
-			
 			file.seek(0);
 			head.setFileName(file.readString(4));
 			head.setVersion(file.readShort());
@@ -59,8 +56,9 @@ public class DataAc {
 
 	public Directory[] getDirectories() {
 		getHead();
+		/*目录开始位置*/
 		int offset = head.getDataOffset();
-		// int e_size=head.getElementSize();
+		/*目录数量*/
 		int e_num = head.getElementNum();
 		Directory temp;
 		directories = new Directory[e_num];
@@ -112,7 +110,6 @@ public class DataAc {
 					}
 					
 					else if(t==19){
-						//System.out.println(temp.getTagName()+":"+en);
 						
 						if(en==2){
 							temp.setRs(file.readCString(2)+file.readCString(2));
@@ -123,7 +120,7 @@ public class DataAc {
 					}
 					
 					else if(t==10){
-							temp.setRs(file.readDate());
+                        temp.setRs(file.readDate());
 					}
 					
 					else if(t==11){
@@ -151,8 +148,7 @@ public class DataAc {
 					file.skipBytes(4);
 					}
 				}
-				
-				
+
 				file.skipBytes(4);
 				directories[i] = temp;
 			}
@@ -163,19 +159,18 @@ public class DataAc {
 		return directories;
 	}
 
+
 	public Map<String, String> getAllData() {
 		getDirectories();
-		try {
+		try {/*使用红黑树*/
 			dataMap = new TreeMap<String, String>();
 			for (Directory d : directories) {
-				//System.out.println(d.getTagName());
-				// int e_size = d.getElementSize();
 				int e_num = d.getElementNum();
 				int i_size = d.getItemSize();
 				short type = d.getElementType();
 				StringBuffer res = new StringBuffer();
+
 				if (i_size > 4) {
-					
 					file.seek(d.getItemOffset());
 					if (type < 1024) {
 						switch (type) {
@@ -251,9 +246,7 @@ public class DataAc {
 		String r2="";
 		String [] DNA=dataMap.get("PBAS 2").split("");
 		String [] location=dataMap.get("PLOC 2").split(";");
-		//System.out.println(location.length);
 		String [] data9=dataMap.get("DATA 9").split(";");
-		//System.out.println(data9.length);
 		String [] data10=dataMap.get("DATA 10").split(";");
 		String [] data11=dataMap.get("DATA 11").split(";");
 		String [] data12=dataMap.get("DATA 12").split(";");
@@ -309,26 +302,23 @@ public class DataAc {
 			
 			
 			if(n1!=0 && n2!=0){
-		
-			//System.out.println(n1+"   "+n2);
-			if(n2/n1>tv1){
-				yc.add(i);
-				DNA[i]=e2.getKey();
-				SFInfo+=(i+1+":"+e1.getKey()+e2.getKey()+";");
-				r1+=(i+1+";");
-			}
-			
-			else if(n2/n1<tv1 && n2/n1>tv2){
-				ys.add(i);
-				SFInfo+=(i+1+":"+e1.getKey()+e2.getKey()+";");
-				r2+=(i+1+";");
-			}
+
+                if(n2/n1>tv1){
+                    yc.add(i);
+                    DNA[i]=e2.getKey();
+                    SFInfo+=(i+1+":"+e1.getKey()+e2.getKey()+";");
+                    r1+=(i+1+";");
+                }
+
+                else if(n2/n1<tv1 && n2/n1>tv2){
+                    ys.add(i);
+                    SFInfo+=(i+1+":"+e1.getKey()+e2.getKey()+";");
+                    r2+=(i+1+";");
+                }
 			}
 			
 		}
-		
-		
-		
+
 		String U_DNA="";
 		
 		
@@ -355,8 +345,7 @@ public class DataAc {
 		dataMap.put("U_DNA", U_DNA);
 		dataMap.put("N_DNA", N_DNA);
 		dataMap.put("sf_info",SFInfo );
-		
-		
+
 		return dataMap;
 	}
 

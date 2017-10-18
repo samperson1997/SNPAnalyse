@@ -1,16 +1,20 @@
 package main.model;
 
-
 public class Head {
 
 	private String fileName;
 	private short version;
 	private String tagName;
 	private int tagNum;
+	/*指向文件目录种类*/
 	private Short elementType;
+	/*指向文件目录大小*/
 	private int elementSize;
+	/*指向文件目录数量*/
 	private int elementNum;
+	/*目录大小*/
 	private int dataSize;
+	/*目录开始位置偏移量*/
 	private int dataOffset;
 
 	public int getElementNum() {
@@ -91,7 +95,7 @@ public class Head {
  * file_head结构
  <head>
  <!-- byte 0-3 -->
- <filemame>ABIF</filemame>  
+ <filemame>ABIF</filemame>
  <!-- byte 4-5 -->
  <version>101</version>
  <!-- byte 6-30 -->
