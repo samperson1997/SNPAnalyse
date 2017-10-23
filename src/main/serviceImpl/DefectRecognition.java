@@ -1,5 +1,6 @@
 package main.serviceImpl;
 
+import main.daoImpl.GeneDao;
 import main.service.DefectRecognitionService;
 import main.util.Util;
 
@@ -31,6 +32,97 @@ public class DefectRecognition implements DefectRecognitionService {
         return null;
     }
 
+    public String getMissGeneSort(Map<String, String> dataMap) {
+        String la = dataMap.get("N_DNA");
+        String SFInfo = dataMap.get("sf_info");
+        System.out.println(SFInfo);
+        String[] locations = la.split("");
+        String res = dataMap.get("yc") + ";" + dataMap.get("ys");
+        String[] temp = res.split(";");
+        int[] nums = new int[temp.length];
+
+        for (int i = 0; i < temp.length; i++) {
+            nums[i] = Integer.valueOf(temp[i]) - 1;
+        }
+        Arrays.sort(nums);
+
+        String[] tt = SFInfo.split(";");
+        Map<String, String> sfMap = new HashMap<String, String>();
+        for (String sft : tt) {
+            String[] ta = sft.split(":");
+            sfMap.put(ta[0], ta[1]);
+        }
+
+        int start = nums[0];
+        //int start_index=0;
+        int end = nums[nums.length - 1];
+        //int end_index=nums.length-1;
+        //??????????????
+        for (int j = 0; j < nums.length - 1; j++) {
+            int n1 = nums[j];
+            int n2 = nums[j + 1];
+            if ((n2 - n1) > 4) {
+                start = n2;
+                //start_index=j+1;
+            } else {
+                break;
+            }
+        }
+
+        //?????????????
+        for (int m = nums.length - 1; m > 0; m--) {
+            int n3 = nums[m];
+            int n4 = nums[m - 1];
+            if ((n3 - n4) > 4) {
+                end = n3;
+                //end_index=m-1;
+            } else {
+                break;
+            }
+        }
+        System.out.println("??????ть????? " + (start + 1));
+        System.out.println("?????????????? " + (end + 1));
+        String gs = "";
+
+        for (int h = start - 10; h < start; h++) {
+            gs += locations[h];
+        }
+
+        System.out.println("??????ть??10??????? " + gs);
+        String ck = new GeneDao().searchGeneByType("LPL").getSort();
+        ck = ck.toUpperCase();
+        int sindex = ck.indexOf(gs);
+        if (sindex == -1) {
+            return "-1;-1";
+        }
+        int gg = sindex + gs.length();
+        System.out.println(gg);
+        String cf = "";
+        for (int i = 0; i < 20; i++) {
+            String ck_s = String.valueOf(ck.charAt(gg + i));
+
+            if (res.indexOf(start + i + 1 + "") == -1) {
+                cf += ck_s;
+                continue;
+            }
+            String sf = sfMap.get(start + i + 1 + "");
+            int d = sf.indexOf(ck_s);
+            cf += sf.charAt(1 - d);
+        }
+        int eindex = ck.substring(gg).indexOf(cf);
+        System.out.println(cf);
+        System.out.println("");
+        System.out.println(eindex);
+        System.out.println("....................");
+        if (ck.indexOf(cf) == -1) {
+            return sindex + ";-1";
+        } else {
+            return sindex + ";" + (eindex - 1);
+        }
+
+    }
+
+
     private int getMaxOfRange(String[] data, String location, int round) {
         Map<Integer, Integer> map = new HashMap<Integer, Integer>();
         int start = Integer.valueOf(location) - round;
@@ -55,9 +147,6 @@ public class DefectRecognition implements DefectRecognitionService {
 
     }
 
-    private Map<Integer, Integer> getSortedMap() {
-        return null;
-    }
 
     @Override
     public Map<String, String> getAnalyseRes(int start, int end, double tv1, double tv2) {

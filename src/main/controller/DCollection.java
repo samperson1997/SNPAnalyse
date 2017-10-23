@@ -77,7 +77,7 @@ public class DCollection {
             dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
             //
             if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
-                String lack = new DataDeal().getMissGeneSort(dm);
+                String lack = defectRecognition.getMissGeneSort(dm);
                 System.out.println(lack);
                 dm.put("lack_gene", lack);
             }
@@ -95,7 +95,7 @@ public class DCollection {
             analyse.setYc(dm.get("yc"));
             analyse.setYs(dm.get("ys"));
             analyse.setLocation(dm.get("PLOC 2"));
-            new AnalyseDao().saveAnalyseRes(analyse);
+//            new AnalyseDao().saveAnalyseRes(analyse);
 
 
         }
