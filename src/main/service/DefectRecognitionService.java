@@ -7,20 +7,8 @@ import java.util.Map;
  */
 public interface DefectRecognitionService {
     /**
-     *
-     * @return
+     * get result of defect recognition
+     * @return Map<String, String>
      */
-    Map<String, String> checkSingleDefect();
-
-    /**
-     *
-     * @return
-     */
-    Map<String, String> checkExtraDefect();
-
-    /**
-     *
-     * @return
-     */
-    Map<String, String> checkMissDefect();
+    Map<String, String> getRes();
 }

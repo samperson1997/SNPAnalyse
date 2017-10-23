@@ -10,18 +10,15 @@ import java.util.Map;
 public class DefectRecognition implements DefectRecognitionService{
     private Map<String, String> dataMap;
 
-    @Override
-    public Map<String, String> checkSingleDefect() {
+    private Map<String, String> checkSingleDefect() {
         return null;
     }
 
-    @Override
-    public Map<String, String> checkExtraDefect() {
+    private Map<String, String> checkExtraDefect() {
         return null;
     }
 
-    @Override
-    public Map<String, String> checkMissDefect() {
+    private Map<String, String> checkMissDefect() {
         return null;
     }
 
@@ -33,7 +30,8 @@ public class DefectRecognition implements DefectRecognitionService{
         return null;
     }
 
-    private Map<String, String> getRes(){
+    @Override
+    public Map<String, String> getRes(){
         return null;
     }
 
