@@ -150,7 +150,7 @@ public class DefectRecognition implements DefectRecognitionService {
 
     @Override
     public Map<String, String> getAnalyseRes(int start, int end, double tv1, double tv2) {
-        dataAc.getAllData();
+        dataMap = dataAc.getAllData();
         String r1 = "";
         String r2 = "";
         String[] DNA = dataMap.get("PBAS 2").split("");
