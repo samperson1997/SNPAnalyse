@@ -20,6 +20,6 @@ public interface DefectAnalyseService {
      *
      * @return
      */
-    Map<String, String > getRealChangeInfo();
+    Map<String, String > getChangedInfo();
 
 }

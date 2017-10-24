@@ -252,6 +252,10 @@ public class DefectRecognition implements DefectRecognitionService {
         dataMap.put("N_DNA", N_DNA);
         dataMap.put("sf_info", SFInfo);
 
+        System.out.println("U_DNA:" + U_DNA);
+        System.out.println("N_DNA:" + N_DNA);
+        System.out.println("sf_info:" + SFInfo);
+
         return dataMap;
     }
 
