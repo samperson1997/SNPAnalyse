@@ -7,10 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import main.daoImpl.AnalyseDao;
-import main.serviceImpl.DataAc;
-import main.serviceImpl.DataDeal;
 import main.model.Analyse;
+import main.serviceImpl.DefectAnalyse;
 import main.serviceImpl.DefectRecognition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
