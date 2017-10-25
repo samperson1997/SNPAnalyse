@@ -1,15 +1,12 @@
 package main.serviceImpl;
 
-import main.daoImpl.AnalyseDao;
-import main.daoImpl.GeneDao;
+import main.daoImpl.AnalyseDaoImpl;
+import main.daoImpl.GeneDaoImpl;
 import main.model.Analyse;
 import main.util.Util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DataDeal {
     private Util util;
@@ -26,8 +23,8 @@ public class DataDeal {
      */
     public void changeYsToYc(String filename, String ys) {
 
-        AnalyseDao analyseDao = new AnalyseDao();
-        Analyse analyse = analyseDao.searchAnalyseByFileName(filename);
+        AnalyseDaoImpl analyseDaoImpl = new AnalyseDaoImpl();
+        Analyse analyse = analyseDaoImpl.searchAnalyseByFileName(filename);
 
         String old_ys = analyse.getYs();
         String old_yc = analyse.getYc();
@@ -73,13 +70,13 @@ public class DataDeal {
         analyse.setYc(r1);
         analyse.setYs(r2);
 
-        analyseDao.updateAnalyseRes(analyse);
+        analyseDaoImpl.updateAnalyseRes(analyse);
 
     }
 
 
     public void getCKIndex(Analyse analyse) {
-        String ck = new GeneDao().searchGeneByType("LPL").getSort();
+        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
         String dna = analyse.getDna();
         String[] yc = analyse.getYc().split(";");
         for (String temp : yc) {
