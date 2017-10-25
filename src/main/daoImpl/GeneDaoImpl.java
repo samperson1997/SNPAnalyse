@@ -1,11 +1,12 @@
 package main.daoImpl;
 
+import main.dao.GeneDao;
 import main.util.HibernateSessionFactory;
 import main.model.Dna;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class GeneDao {
+public class GeneDaoImpl implements GeneDao{
 	
 //	public void saveAnalyseRes(Analyse analyse){
 //		Session session=HibernateSessionFactory.getSession();

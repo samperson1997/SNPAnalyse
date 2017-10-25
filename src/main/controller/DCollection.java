@@ -7,9 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import main.daoImpl.AnalyseDao;
-import main.serviceImpl.DataAc;
-import main.serviceImpl.DataDeal;
 import main.model.Analyse;
 import main.serviceImpl.DefectRecognition;
 import org.springframework.boot.SpringApplication;
@@ -95,7 +92,7 @@ public class DCollection {
             analyse.setYc(dm.get("yc"));
             analyse.setYs(dm.get("ys"));
             analyse.setLocation(dm.get("PLOC 2"));
-//            new AnalyseDao().saveAnalyseRes(analyse);
+//            new AnalyseDaoImpl().saveAnalyseRes(analyse);
 
 
         }

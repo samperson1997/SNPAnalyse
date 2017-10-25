@@ -1,6 +1,7 @@
 package main.serviceImpl;
 
-import main.daoImpl.GeneDao;
+import main.dao.GeneDao;
+import main.daoImpl.GeneDaoImpl;
 import main.service.DefectRecognitionService;
 import main.util.Util;
 
@@ -89,7 +90,7 @@ public class DefectRecognition implements DefectRecognitionService {
         }
 
         System.out.println("??????ть??10??????? " + gs);
-        String ck = new GeneDao().searchGeneByType("LPL").getSort();
+        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
         ck = ck.toUpperCase();
         int sindex = ck.indexOf(gs);
         if (sindex == -1) {

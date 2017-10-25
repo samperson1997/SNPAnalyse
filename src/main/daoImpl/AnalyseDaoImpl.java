@@ -1,11 +1,12 @@
 package main.daoImpl;
 
+import main.dao.AnalyseDao;
 import main.util.HibernateSessionFactory;
 import main.model.Analyse;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class AnalyseDao {
+public class AnalyseDaoImpl implements AnalyseDao{
 	
 	public void saveAnalyseRes(Analyse analyse){
 		Session session= HibernateSessionFactory.getSession();
