@@ -9,6 +9,7 @@ public class AminoAcidAnalyse implements AminoAcidAnalyseService {
 
     private Map<String, String> dataMap;
     private Map<String, String> changedMap;
+    private Map<String, String> areaMap;
     private DefectRecognition defectRecognition;
     private DefectAnalyse defectAnalyse;
     private AnalyseDaoImpl analyseDaoImpl;
@@ -18,6 +19,7 @@ public class AminoAcidAnalyse implements AminoAcidAnalyseService {
         defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
         dataMap = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
         changedMap = defectAnalyse.getChangedInfo();
+        areaMap = defectAnalyse.getArea();
         analyseDaoImpl = new AnalyseDaoImpl();
     }
 
@@ -28,8 +30,13 @@ public class AminoAcidAnalyse implements AminoAcidAnalyseService {
     public Map<String, String> getAcidAnalysis() {
 
         String[] ycArray = dataMap.get("yc").split(";");
-        for(String st: ycArray) {
+        for (String st : ycArray) {
             int Io = Integer.valueOf(changedMap.get(st));
+
+            // 非内显子, 继续分析
+            if (!areaMap.get(st).equals("inner")) {
+
+            }
 
         }
         return null;

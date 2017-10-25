@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import main.model.Analyse;
+import main.serviceImpl.DefectAnalyse;
 import main.serviceImpl.DefectRecognition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -71,13 +72,18 @@ public class DCollection {
             outputStream.close();
 //			DataAc dataAc = new DataAc(path);
             DefectRecognition defectRecognition = new DefectRecognition(path);
+
+            DefectAnalyse defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
+            defectAnalyse.getChangedInfo();
+            defectAnalyse.getArea();
+
             dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
             //
-            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
-                String lack = defectRecognition.getMissGeneSort(dm);
-                System.out.println(lack);
-                dm.put("lack_gene", lack);
-            }
+//            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
+//                String lack = defectRecognition.getMissGeneSort(dm);
+//                System.out.println(lack);
+//                dm.put("lack_gene", lack);
+//            }
             //
             jsonObject = JSONObject.fromObject(dm);
 

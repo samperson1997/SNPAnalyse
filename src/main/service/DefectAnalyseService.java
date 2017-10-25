@@ -14,7 +14,13 @@ public interface DefectAnalyseService {
      *
      * @return
      */
-    Map<String, String > getTotalAnalysis();
+    Map<String, String > getCDSPosition();
+
+    /**
+     *
+     * @return
+     */
+    Map<String, String > getArea();
 
     /**
      *
