@@ -161,16 +161,17 @@ public class DefectRecognition implements DefectRecognitionService {
         String[] data11 = dataMap.get("DATA 11").split(";");
         String[] data12 = dataMap.get("DATA 12").split(";");
 
+        //正常的DNA序列
         String N_DNA = "";
-        String SFInfo = "";
+        String doublePeakInfo = ""; //双峰信息 原变量名为SFInfo
         for (int n = 0; n < DNA.length; n++) {
             N_DNA += DNA[n];
         }
 
         Map<String, Integer> data = null;
 
-        ArrayList<Integer> yc = new ArrayList<Integer>();
-        ArrayList<Integer> ys = new ArrayList<Integer>();
+        ArrayList<Integer> confirmedDoublePeak = new ArrayList<Integer>(); //确认双峰异常 原变量名为：yc
+        ArrayList<Integer> suspectedDoublePeak = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
         int round = data9.length / location.length / 2;
 
         Map<String, String> channelMap = new HashMap<String, String>();
@@ -213,13 +214,13 @@ public class DefectRecognition implements DefectRecognitionService {
             if (n1 != 0 && n2 != 0) {
 
                 if (n2 / n1 > tv1) {
-                    yc.add(i);
+                    confirmedDoublePeak.add(i);
                     DNA[i] = e2.getKey();
-                    SFInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
+                    doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
                     r1 += (i + 1 + ";");
                 } else if (n2 / n1 < tv1 && n2 / n1 > tv2) {
-                    ys.add(i);
-                    SFInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
+                    suspectedDoublePeak.add(i);
+                    doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
                     r2 += (i + 1 + ";");
                 }
             }
@@ -236,7 +237,7 @@ public class DefectRecognition implements DefectRecognitionService {
 
         r1 = util.deleteEnd(r1);
         r2 = util.deleteEnd(r2);
-        SFInfo = util.deleteEnd(SFInfo);
+        doublePeakInfo = util.deleteEnd(doublePeakInfo);
 
         if (r2.length() > 0) {
             r2 = r2.substring(0, r2.length() - 1);
@@ -251,11 +252,11 @@ public class DefectRecognition implements DefectRecognitionService {
         dataMap.put("ys", r2);
         dataMap.put("U_DNA", U_DNA);
         dataMap.put("N_DNA", N_DNA);
-        dataMap.put("sf_info", SFInfo);
+        dataMap.put("sf_info", doublePeakInfo);
 
         System.out.println("U_DNA:" + U_DNA);
         System.out.println("N_DNA:" + N_DNA);
-        System.out.println("sf_info:" + SFInfo);
+        System.out.println("sf_info:" + doublePeakInfo);
 
         return dataMap;
     }

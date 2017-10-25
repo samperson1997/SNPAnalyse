@@ -7,14 +7,7 @@ import main.util.Util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 public class DataAc {
@@ -26,9 +19,10 @@ public class DataAc {
     private Util util;
 
     public DataAc(String path) {
-
+        int[] res = {0,0};
         try {
             file = new MyFileReader(path, "rw");
+            System.out.println(file);
         } catch (FileNotFoundException e) {
             System.out.println("no file");
             e.printStackTrace();
@@ -52,6 +46,25 @@ public class DataAc {
             head.setElementNum(file.readInt());
             head.setDataSize(file.readInt());
             head.setDataOffset(file.readInt());
+
+//            System.out.println("==================================");
+//            System.out.println("filaName: " + head.getFileName());
+//            System.out.println("==================================");
+//            System.out.println("version: " + head.getVersion());
+//            System.out.println("==================================");
+//            System.out.println("tagName: " + head.getTagName());
+//            System.out.println("==================================");
+//            System.out.println("tagNum: " + head.getTagName());
+//            System.out.println("==================================");
+//            System.out.println("elementType: " + head.getElementType());
+//            System.out.println("==================================");
+//            System.out.println("elementSize: " + head.getElementSize());
+//            System.out.println("==================================");
+//            System.out.println("elementNum: " + head.getElementNum());
+//            System.out.println("==================================");
+//            System.out.println("dataSIze: " + head.getDataSize());
+//            System.out.println("==================================");
+//            System.out.println("dataOffset: " + head.getDataOffset());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,79 +76,78 @@ public class DataAc {
         int offset = head.getDataOffset();
         /*目录数量*/
         int e_num = head.getElementNum();
-        Directory temp;
+        Directory directory; //目录 原变量名为temp
         directories = new Directory[e_num];
         try {
             file.seek(offset);
             for (int i = 0; i < e_num; i++) {
-                temp = new Directory();
-                temp.setTagName(file.readString(4));
-                temp.setTagNum(file.readInt());
-                short t = file.readShort();
-                temp.setElementType(t);
-                temp.setElementSize(file.readShort());
-                int en = file.readInt();
-                temp.setElementNum(en);
-                int s = file.readInt();
-                temp.setItemSize(s);
-                if (s > 4) {
-                    temp.setItemOffset(file.readInt());
+                directory = new Directory();
+                directory.setTagName(file.readString(4));
+                directory.setTagNum(file.readInt());
+                short elementType = file.readShort(); //指向文件目录种类 原变量名为t
+                directory.setElementType(elementType);
+                directory.setElementSize(file.readShort());
+                int elementNum = file.readInt(); //指向文件目录大小 原变量名为en
+                directory.setElementNum(elementNum);
+                int itemSize = file.readInt(); //指向文件目录数量 原变量名为s
+                directory.setItemSize(itemSize);
+                if (itemSize > 4) {
+                    directory.setItemOffset(file.readInt());
                 } else {
-                    if (t == 4) {
-                        if (en == 1) {
-                            temp.setRs(file.readShort() + "");
+                    if (elementType == 4) {
+                        if (elementNum == 1) {
+                            directory.setRs(file.readShort() + "");
                             file.skipBytes(2);
                         } else {
-                            temp.setRs(file.readShort() + ";" + file.readShort());
+                            directory.setRs(file.readShort() + ";" + file.readShort());
                         }
 
-                    } else if (t == 1) {
+                    } else if (elementType == 1) {
                         String r = "";
-                        for (int j = 0; j < en; j++) {
+                        for (int j = 0; j < elementNum; j++) {
                             r += (file.readUnsignedByte() + ";");
                         }
                         r = util.deleteEnd(r);
-                        temp.setRs(r);
-                        file.skipBytes(4 - en);
-                    } else if (t == 18) {
+                        directory.setRs(r);
+                        file.skipBytes(4 - elementNum);
+                    } else if (elementType == 18) {
                         String r = "";
                         int nn = file.readUnsignedByte();
                         for (int j = 0; j < nn; j++) {
                             r += (file.readString(1));
                         }
                         r = util.deleteEnd(r);
-                        temp.setRs(r);
+                        directory.setRs(r);
                         file.skipBytes(3 - nn);
-                    } else if (t == 19) {
-
-                        if (en == 2) {
-                            temp.setRs(file.readCString(2) + file.readCString(2));
+                    } else if (elementType == 19) {
+                        if (elementNum == 2) {
+                            directory.setRs(file.readCString(2) + file.readCString(2));
                         } else {
-                            temp.setRs(file.readCString(2));
+                            directory.setRs(file.readCString(2));
                             file.skipBytes(2);
                         }
-                    } else if (t == 10) {
-                        temp.setRs(file.readDate());
-                    } else if (t == 11) {
-                        temp.setRs(file.readTime());
-                    } else if (t == 5) {
-                        temp.setRs(file.readInt() + "");
-                    } else if (t == 2) {
+                    } else if (elementType == 10) {
+                        directory.setRs(file.readDate());
+                    } else if (elementType == 11) {
+                        directory.setRs(file.readTime());
+                    } else if (elementType == 5) {
+                        directory.setRs(file.readInt() + "");
+                    } else if (elementType == 2) {
                         String res = "";
-                        for (int j = 0; j < en; j++) {
+                        for (int j = 0; j < elementNum; j++) {
                             res += file.readString(1);
                         }
-                        temp.setRs(res);
-                        file.skipBytes(4 - en);
-                    } else if (t == 7) {
-                        temp.setRs(file.readFloat() + "");
+                        directory.setRs(res);
+                        file.skipBytes(4 - elementNum);
+                    } else if (elementType == 7) {
+                        directory.setRs(file.readFloat() + "");
                     } else {
                         file.skipBytes(4);
                     }
                 }
 
                 file.skipBytes(4);
-                directories[i] = temp;
+                directories[i] = directory;
             }
         } catch (IOException e) {
             e.printStackTrace();

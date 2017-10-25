@@ -25,9 +25,13 @@ public class Analyse implements java.io.Serializable {
 	private String data11;
 	private String data12;
 	private String location;
+	//正常DNA序列
 	private String dna;
+	//不正常DNA序列
 	private String UDna;
+	//确认双峰
 	private String yc;
+	//意思双峰
 	private String ys;
 
 	// Constructors
