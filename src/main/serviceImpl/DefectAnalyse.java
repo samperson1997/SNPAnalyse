@@ -70,8 +70,29 @@ public class DefectAnalyse implements DefectAnalyseService {
      */
     @Override
     public Map<String, String> getCDSPosition() {
+        Map<String, String> CDSPositionMap = new HashMap<>();
+        Map<String, String> positionMap = getRealPosition();
+        List<String> changedList = new ArrayList<>();
 
-        // 先判断在不在CDS上……
+        for (int i = 0; i < dataMap.get("sf_info").split(";").length; i++) {
+            changedList.add(dataMap.get("sf_info").split(";")[i]);
+            String[] changedInfo = changedList.get(i).split(":");
+
+            // 先判断在CDS上，再计算异常在完整CDS片段上的真实位置
+            int realPosition = Integer.parseInt(positionMap.get(changedInfo[0]));
+            int CDSPosition = 0;
+            if (isCDS(realPosition)) {
+                for (int j = 0; j < CDSs.length; j++) {
+                    if (CDS_end[j] < realPosition) {
+                        CDSPosition += (CDS_end[j] - CDS_start[j]);
+                    } else {
+                        CDSPosition += (realPosition - CDS_start[j]);
+                    }
+                }
+            }
+            CDSPositionMap.put(changedInfo[0], String.valueOf(CDSPosition));
+        }
+
         return null;
     }
 
