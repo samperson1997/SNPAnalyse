@@ -28,4 +28,9 @@ public interface DefectAnalyseService {
      */
     Map<String, String > getChangedInfo();
 
+    /**
+     *
+     * @return
+     */
+    Map<String, String> getAcidAnalysis();
 }

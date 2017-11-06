@@ -9,7 +9,7 @@ import javax.persistence.Table;
  * Dna entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "dna", catalog = "gene")
+@Table(name = "dna")
 
 public class Dna implements java.io.Serializable {
 
