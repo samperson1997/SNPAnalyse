@@ -1,4 +1,4 @@
-package main.util;
+package main.java.util;
 
 public class Util {
     public String deleteEnd(String s) {

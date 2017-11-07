@@ -1,4 +1,4 @@
-package main.model;
+package main.java.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,7 @@ public class Secret implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
     private String character;
     private String chs_name;
     private String sim_name;
@@ -31,15 +32,12 @@ public class Secret implements java.io.Serializable {
         this.sim_name = sim_name;
     }
 
-    @Id
-
-    @Column(name = "character", nullable = false, length = 10)
-    public void setCharacter(String character) {
+    @Column(name = "s_character", nullable = false, length = 10)
+    public void setS_Characters(String character) {
         this.character = character;
     }
 
-    public String getCharacter() {
-
+    public String getS_Characters() {
         return character;
     }
 

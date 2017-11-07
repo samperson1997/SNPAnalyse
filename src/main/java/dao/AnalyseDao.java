@@ -1,7 +1,7 @@
-package main.dao;
+package main.java.dao;
 
-import main.model.Analyse;
-import main.model.Secret;
+import main.java.model.Analyse;
+import main.java.model.Secret;
 
 public interface AnalyseDao {
 

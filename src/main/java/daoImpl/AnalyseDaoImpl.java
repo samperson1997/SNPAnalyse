@@ -1,9 +1,9 @@
-package main.daoImpl;
+package main.java.daoImpl;
 
-import main.dao.AnalyseDao;
-import main.model.Analyse;
-import main.model.Secret;
-import main.util.HibernateSessionFactory;
+import main.java.dao.AnalyseDao;
+import main.java.model.Analyse;
+import main.java.model.Secret;
+import main.java.util.HibernateSessionFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

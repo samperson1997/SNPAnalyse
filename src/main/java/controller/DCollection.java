@@ -1,4 +1,4 @@
-package main.controller;
+package main.java.controller;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,9 +7,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import main.model.Analyse;
-import main.serviceImpl.DefectAnalyse;
-import main.serviceImpl.DefectRecognition;
+import main.java.model.Analyse;
+import main.java.serviceImpl.DefectAnalyse;
+import main.java.serviceImpl.DefectRecognition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package main.service;
+package main.java.service;
 
 public interface AlgorithmModifyService {
     /**

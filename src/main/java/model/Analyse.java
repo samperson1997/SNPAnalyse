@@ -1,4 +1,4 @@
-package main.model;
+package main.java.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +9,7 @@ import javax.persistence.Table;
  * Analyse entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "analyse", catalog = "gene")
+@Table(name = "analyse")
 
 public class Analyse implements java.io.Serializable {
 
@@ -76,9 +76,7 @@ public class Analyse implements java.io.Serializable {
 
     // Property accessors
     @Id
-
     @Column(name = "file_name", unique = true, nullable = false, length = 20)
-
     public String getFileName() {
         return this.fileName;
     }

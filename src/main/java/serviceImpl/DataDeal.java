@@ -1,9 +1,9 @@
-package main.serviceImpl;
+package main.java.serviceImpl;
 
-import main.daoImpl.AnalyseDaoImpl;
-import main.daoImpl.GeneDaoImpl;
-import main.model.Analyse;
-import main.util.Util;
+import main.java.daoImpl.AnalyseDaoImpl;
+import main.java.daoImpl.GeneDaoImpl;
+import main.java.model.Analyse;
+import main.java.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;

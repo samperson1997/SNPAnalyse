@@ -1,8 +1,8 @@
-package main.daoImpl;
+package main.java.daoImpl;
 
-import main.dao.GeneDao;
-import main.util.HibernateSessionFactory;
-import main.model.Dna;
+import main.java.dao.GeneDao;
+import main.java.util.HibernateSessionFactory;
+import main.java.model.Dna;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

@@ -1,4 +1,4 @@
-package main.model;
+package main.java.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +10,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "dna")
-
 public class Dna implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;

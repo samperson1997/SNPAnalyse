@@ -1,5 +1,6 @@
-package main.util;
+package main.java.util;
 
+import com.fasterxml.classmate.AnnotationConfiguration;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
@@ -24,15 +25,16 @@ public class HibernateSessionFactory {
      */
 	private static final ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
     private static org.hibernate.SessionFactory sessionFactory;
-	
+
     private static Configuration configuration = new Configuration();
     
     private static ServiceRegistry serviceRegistry; 
 
 	static {
+
     	try {
-			configuration.configure();
-			serviceRegistry = new StandardServiceRegistryBuilder().configure().build();
+			configuration.configure("/main/resources/hibernate.cfg.xml");
+			serviceRegistry = new StandardServiceRegistryBuilder().configure("/main/resources/hibernate.cfg.xml").build();
 			try {
 				sessionFactory = new MetadataSources(serviceRegistry).buildMetadata().buildSessionFactory();
 			} catch (Exception e) {
@@ -75,8 +77,8 @@ public class HibernateSessionFactory {
      */
 	public static void rebuildSessionFactory() {
 		try {
-			configuration.configure();
-			serviceRegistry = new StandardServiceRegistryBuilder().configure().build();
+			configuration.configure("/main/resources/hibernate.cfg.xml");
+			serviceRegistry = new StandardServiceRegistryBuilder().configure("/main/resources/hibernate.cfg.xml").build();
 			try {
 				sessionFactory = new MetadataSources(serviceRegistry).buildMetadata().buildSessionFactory();
 			} catch (Exception e) {

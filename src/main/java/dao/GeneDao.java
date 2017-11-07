@@ -1,6 +1,6 @@
-package main.dao;
+package main.java.dao;
 
-import main.model.Dna;
+import main.java.model.Dna;
 
 public interface GeneDao {
 

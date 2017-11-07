@@ -1,7 +1,7 @@
-package main.serviceImpl;
+package main.java.serviceImpl;
 
-import main.daoImpl.AnalyseDaoImpl;
-import main.service.DefectAnalyseService;
+import main.java.daoImpl.AnalyseDaoImpl;
+import main.java.service.DefectAnalyseService;
 
 import java.util.ArrayList;
 import java.util.HashMap;

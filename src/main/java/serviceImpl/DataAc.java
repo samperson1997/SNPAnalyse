@@ -1,9 +1,9 @@
-package main.serviceImpl;
+package main.java.serviceImpl;
 
-import main.model.Directory;
-import main.model.Head;
-import main.util.MyFileReader;
-import main.util.Util;
+import main.java.model.Directory;
+import main.java.model.Head;
+import main.java.util.MyFileReader;
+import main.java.util.Util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

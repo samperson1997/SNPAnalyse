@@ -1,6 +1,6 @@
-package main.serviceImpl;
+package main.java.serviceImpl;
 
-import main.service.AlgorithmModifyService;
+import main.java.service.AlgorithmModifyService;
 
 public class AlgorithmModifyImpl implements AlgorithmModifyService{
 

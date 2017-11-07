@@ -1,9 +1,8 @@
-package main.serviceImpl;
+package main.java.serviceImpl;
 
-import main.dao.GeneDao;
-import main.daoImpl.GeneDaoImpl;
-import main.service.DefectRecognitionService;
-import main.util.Util;
+import main.java.daoImpl.GeneDaoImpl;
+import main.java.service.DefectRecognitionService;
+import main.java.util.Util;
 
 import java.util.*;
 
@@ -94,38 +93,37 @@ public class DefectRecognition implements DefectRecognitionService {
         }
 
         System.out.println("??????ть??10??????? " + gs);
-//        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-//        ck = ck.toUpperCase();
-//        int sindex = ck.indexOf(gs);
-//        if (sindex == -1) {
-//            return "-1;-1";
-//        }
-//        int gg = sindex + gs.length();
-//        System.out.println(gg);
-//        String cf = "";
-//        for (int i = 0; i < 20; i++) {
-//            String ck_s = String.valueOf(ck.charAt(gg + i));
-//
-//            if (res.indexOf(start + i + 1 + "") == -1) {
-//                cf += ck_s;
-//                continue;
-//            }
-//            String sf = sfMap.get(start + i + 1 + "");
-//            int d = sf.indexOf(ck_s);
-//            cf += sf.charAt(1 - d);
-//        }
-//        int eindex = ck.substring(gg).indexOf(cf);
-//        System.out.println(cf);
-//        System.out.println("");
-//        System.out.println(eindex);
-//        System.out.println("....................");
-//        if (ck.indexOf(cf) == -1) {
-//            return sindex + ";-1";
-//        } else {
-//            return sindex + ";" + (eindex - 1);
-//        }
-        return "";
 
+        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+        ck = ck.toUpperCase();
+        int sindex = ck.indexOf(gs);
+        if (sindex == -1) {
+            return "-1;-1";
+        }
+        int gg = sindex + gs.length();
+        System.out.println(gg);
+        String cf = "";
+        for (int i = 0; i < 20; i++) {
+            String ck_s = String.valueOf(ck.charAt(gg + i));
+
+            if (res.indexOf(start + i + 1 + "") == -1) {
+                cf += ck_s;
+                continue;
+            }
+            String sf = sfMap.get(start + i + 1 + "");
+            int d = sf.indexOf(ck_s);
+            cf += sf.charAt(1 - d);
+        }
+        int eindex = ck.substring(gg).indexOf(cf);
+        System.out.println(cf);
+        System.out.println("");
+        System.out.println(eindex);
+        System.out.println("....................");
+        if (ck.indexOf(cf) == -1) {
+            return sindex + ";-1";
+        } else {
+            return sindex + ";" + (eindex - 1);
+        }
     }
 
 
