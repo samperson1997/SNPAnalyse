@@ -14,7 +14,13 @@ public interface DefectAnalyseService {
      *
      * @return
      */
-    Map<String, String > getTotalAnalysis();
+    Map<String, String > getCDSPosition();
+
+    /**
+     *
+     * @return
+     */
+    Map<String, String > getArea();
 
     /**
      *
@@ -22,4 +28,9 @@ public interface DefectAnalyseService {
      */
     Map<String, String > getChangedInfo();
 
+    /**
+     *
+     * @return
+     */
+    Map<String, String> getAcidAnalysis();
 }

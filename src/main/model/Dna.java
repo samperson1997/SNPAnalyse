@@ -9,48 +9,64 @@ import javax.persistence.Table;
  * Dna entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "dna", catalog = "gene")
+@Table(name = "dna")
 
 public class Dna implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	private String type;
-	private String sort;
+    private static final long serialVersionUID = 1L;
 
-	// Constructors
+    private String type;
+    private String sort;
+    private String cds;
 
-	/** default constructor */
-	public Dna() {
-	}
+    // Constructors
 
-	/** full constructor */
-	public Dna(String type, String sort) {
-		this.type = type;
-		this.sort = sort;
-	}
+    /**
+     * default constructor
+     */
+    public Dna() {
+    }
 
-	// Property accessors
-	@Id
+    /**
+     * full constructor
+     */
+    public Dna(String type, String sort, String cds) {
+        this.type = type;
+        this.sort = sort;
+        this.cds = cds;
+    }
 
-	@Column(name = "type", unique = true, nullable = false, length = 30)
+    // Property accessors
+    @Id
 
-	public String getType() {
-		return this.type;
-	}
+    @Column(name = "type", unique = true, nullable = false, length = 30)
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return this.type;
+    }
 
-	@Column(name = "sort", nullable = false, length = 65535)
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getSort() {
-		return this.sort;
-	}
+    @Column(name = "sort", nullable = false, length = 65535)
 
-	public void setSort(String sort) {
-		this.sort = sort;
-	}
+    public String getSort() {
+        return this.sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
+
+    @Column(name = "cds", nullable = false, length = 65535)
+
+    public String getCds() {
+        return this.cds;
+    }
+
+    public void setCds(String cds) {
+        this.cds = cds;
+    }
 
 }

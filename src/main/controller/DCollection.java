@@ -7,10 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import main.daoImpl.AnalyseDao;
-import main.serviceImpl.DataAc;
-import main.serviceImpl.DataDeal;
 import main.model.Analyse;
+import main.serviceImpl.DefectAnalyse;
 import main.serviceImpl.DefectRecognition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -74,13 +72,18 @@ public class DCollection {
             outputStream.close();
 //			DataAc dataAc = new DataAc(path);
             DefectRecognition defectRecognition = new DefectRecognition(path);
+
+            DefectAnalyse defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
+            defectAnalyse.getChangedInfo();
+            defectAnalyse.getArea();
+
             dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
             //
-            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
-//                String lack = defectRecognition.getMissGeneSort(dm);
-//                System.out.println(lack);
+//            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
+                String lack = defectRecognition.getMissGeneSort(dm);
+                System.out.println("-----lack-------: " + lack);
 //                dm.put("lack_gene", lack);
-            }
+//            }
             //
             jsonObject = JSONObject.fromObject(dm);
 
@@ -96,26 +99,26 @@ public class DCollection {
             analyse.setYs(dm.get("ys"));
             analyse.setLocation(dm.get("PLOC 2"));
 
-            System.out.println("==================================");
-            System.out.println("filename: " + analyse.getFileName());
-            System.out.println("==================================");
-            System.out.println("DATA 9: " + analyse.getData9());
-            System.out.println("==================================");
-            System.out.println("DATA 10: " + analyse.getData10());
-            System.out.println("==================================");
-            System.out.println("DATA 11: " + analyse.getData11());
-            System.out.println("==================================");
-            System.out.println("DATA 12: " + analyse.getData12());
-            System.out.println("==================================");
-            System.out.println("N_DN: A" + analyse.getDna());
-            System.out.println("==================================");
-            System.out.println("U_DNA: " + analyse.getUDna());
-            System.out.println("==================================");
-            System.out.println("yc: " + analyse.getYc());
-            System.out.println("==================================");
-            System.out.println("ys: " + analyse.getYs());
-            System.out.println("==================================");
-            System.out.println("PLOC 2: " + analyse.getLocation());
+//            System.out.println("==================================");
+//            System.out.println("filename: " + analyse.getFileName());
+//            System.out.println("==================================");
+//            System.out.println("DATA 9: " + analyse.getData9());
+//            System.out.println("==================================");
+//            System.out.println("DATA 10: " + analyse.getData10());
+//            System.out.println("==================================");
+//            System.out.println("DATA 11: " + analyse.getData11());
+//            System.out.println("==================================");
+//            System.out.println("DATA 12: " + analyse.getData12());
+//            System.out.println("==================================");
+//            System.out.println("N_DN: A" + analyse.getDna());
+//            System.out.println("==================================");
+//            System.out.println("U_DNA: " + analyse.getUDna());
+//            System.out.println("==================================");
+//            System.out.println("yc: " + analyse.getYc());
+//            System.out.println("==================================");
+//            System.out.println("ys: " + analyse.getYs());
+//            System.out.println("==================================");
+//            System.out.println("PLOC 2: " + analyse.getLocation());
 //            new AnalyseDao().saveAnalyseRes(analyse);
 
 

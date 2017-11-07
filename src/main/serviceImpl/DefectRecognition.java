@@ -36,7 +36,8 @@ public class DefectRecognition implements DefectRecognitionService {
     public String getMissGeneSort(Map<String, String> dataMap) {
         String la = dataMap.get("N_DNA");
         String SFInfo = dataMap.get("sf_info");
-        System.out.println(SFInfo);
+        System.out.println("-----------双峰信息----------: " + SFInfo);
+        System.out.println("-----------非正常DNA序列----------: " + la);
         String[] locations = la.split("");
         String res = dataMap.get("yc") + ";" + dataMap.get("ys");
         String[] temp = res.split(";");
@@ -46,6 +47,10 @@ public class DefectRecognition implements DefectRecognitionService {
             nums[i] = Integer.valueOf(temp[i]) - 1;
         }
         Arrays.sort(nums);
+
+        for (int i = 0; i < nums.length; i++) {
+            System.out.print(nums[i] + "; ");
+        }
 
         String[] tt = SFInfo.split(";");
         Map<String, String> sfMap = new HashMap<String, String>();
@@ -58,7 +63,7 @@ public class DefectRecognition implements DefectRecognitionService {
         //int start_index=0;
         int end = nums[nums.length - 1];
         //int end_index=nums.length-1;
-        //??????????????
+
         for (int j = 0; j < nums.length - 1; j++) {
             int n1 = nums[j];
             int n2 = nums[j + 1];
@@ -70,7 +75,6 @@ public class DefectRecognition implements DefectRecognitionService {
             }
         }
 
-        //?????????????
         for (int m = nums.length - 1; m > 0; m--) {
             int n3 = nums[m];
             int n4 = nums[m - 1];
@@ -81,8 +85,8 @@ public class DefectRecognition implements DefectRecognitionService {
                 break;
             }
         }
-        System.out.println("??????忪????? " + (start + 1));
-        System.out.println("?????????????? " + (end + 1));
+        System.out.println("连续双峰起始位置：" + (start + 1));
+//        System.out.println("?????????????? " + (end + 1));
         String gs = "";
 
         for (int h = start - 10; h < start; h++) {
@@ -90,36 +94,37 @@ public class DefectRecognition implements DefectRecognitionService {
         }
 
         System.out.println("??????忪??10??????? " + gs);
-        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-        ck = ck.toUpperCase();
-        int sindex = ck.indexOf(gs);
-        if (sindex == -1) {
-            return "-1;-1";
-        }
-        int gg = sindex + gs.length();
-        System.out.println(gg);
-        String cf = "";
-        for (int i = 0; i < 20; i++) {
-            String ck_s = String.valueOf(ck.charAt(gg + i));
-
-            if (res.indexOf(start + i + 1 + "") == -1) {
-                cf += ck_s;
-                continue;
-            }
-            String sf = sfMap.get(start + i + 1 + "");
-            int d = sf.indexOf(ck_s);
-            cf += sf.charAt(1 - d);
-        }
-        int eindex = ck.substring(gg).indexOf(cf);
-        System.out.println(cf);
-        System.out.println("");
-        System.out.println(eindex);
-        System.out.println("....................");
-        if (ck.indexOf(cf) == -1) {
-            return sindex + ";-1";
-        } else {
-            return sindex + ";" + (eindex - 1);
-        }
+//        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+//        ck = ck.toUpperCase();
+//        int sindex = ck.indexOf(gs);
+//        if (sindex == -1) {
+//            return "-1;-1";
+//        }
+//        int gg = sindex + gs.length();
+//        System.out.println(gg);
+//        String cf = "";
+//        for (int i = 0; i < 20; i++) {
+//            String ck_s = String.valueOf(ck.charAt(gg + i));
+//
+//            if (res.indexOf(start + i + 1 + "") == -1) {
+//                cf += ck_s;
+//                continue;
+//            }
+//            String sf = sfMap.get(start + i + 1 + "");
+//            int d = sf.indexOf(ck_s);
+//            cf += sf.charAt(1 - d);
+//        }
+//        int eindex = ck.substring(gg).indexOf(cf);
+//        System.out.println(cf);
+//        System.out.println("");
+//        System.out.println(eindex);
+//        System.out.println("....................");
+//        if (ck.indexOf(cf) == -1) {
+//            return sindex + ";-1";
+//        } else {
+//            return sindex + ";" + (eindex - 1);
+//        }
+        return "";
 
     }
 
@@ -243,10 +248,10 @@ public class DefectRecognition implements DefectRecognitionService {
             r2 = r2.substring(0, r2.length() - 1);
         }
 
-        System.out.println("============yc============");
-        System.out.println(r1);
-        System.out.println("============ys============");
-        System.out.println(r2);
+//        System.out.println("============yc============");
+//        System.out.println(r1);
+//        System.out.println("============ys============");
+//        System.out.println(r2);
 
         dataMap.put("yc", r1);
         dataMap.put("ys", r2);
@@ -254,9 +259,9 @@ public class DefectRecognition implements DefectRecognitionService {
         dataMap.put("N_DNA", N_DNA);
         dataMap.put("sf_info", doublePeakInfo);
 
-        System.out.println("U_DNA:" + U_DNA);
-        System.out.println("N_DNA:" + N_DNA);
-        System.out.println("sf_info:" + doublePeakInfo);
+//        System.out.println("U_DNA:" + U_DNA);
+//        System.out.println("N_DNA:" + N_DNA);
+//        System.out.println("sf_info:" + doublePeakInfo);
 
         return dataMap;
     }

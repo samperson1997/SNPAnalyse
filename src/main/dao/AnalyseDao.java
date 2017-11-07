@@ -1,6 +1,7 @@
 package main.dao;
 
 import main.model.Analyse;
+import main.model.Secret;
 
 public interface AnalyseDao {
 
@@ -22,4 +23,6 @@ public interface AnalyseDao {
      * @return
      */
     Analyse searchAnalyseByFileName(String name);
+
+    Secret getSecret(String secret);
 }
