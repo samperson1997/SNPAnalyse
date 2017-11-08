@@ -84,40 +84,59 @@ public class DefectRecognition implements DefectRecognitionService {
                 break;
             }
         }
+        System.out.println("");
         System.out.println("连续双峰起始位置：" + (start + 1));
-//        System.out.println("?????????????? " + (end + 1));
+        System.out.println("连续双峰结束位置 " + (end + 1));
+
         String gs = "";
 
-        for (int h = start - 10; h < start; h++) {
+        for (int h = start - 20; h < start; h++) {
             gs += locations[h];
         }
 
-        System.out.println("??????忪??10??????? " + gs);
+        System.out.println("连续双峰起始处的前20位碱基序列 " + gs);
 
-        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+        //匹配标准DNA序列
+        String ck = new GeneDaoImpl().searchGeneByType("LMF").getSort();
         ck = ck.toUpperCase();
+        //匹配在序列中的位置
         int sindex = ck.indexOf(gs);
+        //匹配失败
         if (sindex == -1) {
             return "-1;-1";
         }
+
+        //匹配成功
         int gg = sindex + gs.length();
-        System.out.println(gg);
+        System.out.println("在全长中的位置：" + gg);
         String cf = "";
         for (int i = 0; i < 20; i++) {
             String ck_s = String.valueOf(ck.charAt(gg + i));
-
-            if (res.indexOf(start + i + 1 + "") == -1) {
-                cf += ck_s;
-                continue;
-            }
+            System.out.println("===============");
+            System.out.println("start + i + 1: " + (start + i + 1));
+            System.out.println("ck_s: " + ck_s);
+            //todo 修改此处匹配方式 此方法有漏洞
+//            if (res.indexOf(start + i + 1 + "") == -1) {
+//                cf += ck_s;
+//                continue;
+//            }
             String sf = sfMap.get(start + i + 1 + "");
-            int d = sf.indexOf(ck_s);
-            cf += sf.charAt(1 - d);
+            if(sf != null) {
+                System.out.println("sf: " + sf);
+                int d = sf.indexOf(ck_s);
+                //todo
+                cf += sf.charAt(1 - d);
+                System.out.println("cf: " + cf);
+            }else{
+                cf += ck_s;
+                System.out.println("cf: " + cf);
+            }
+            System.out.println("===============");
         }
         int eindex = ck.substring(gg).indexOf(cf);
-        System.out.println(cf);
-        System.out.println("");
-        System.out.println(eindex);
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println("cf: " + cf);
+        System.out.println("eindex: " + eindex);
         System.out.println("....................");
         if (ck.indexOf(cf) == -1) {
             return sindex + ";-1";
