@@ -96,7 +96,7 @@ public class DefectAnalyse implements DefectAnalyseService {
             CDSPositionMap.put(changedInfo[0], String.valueOf(CDSPosition));
         }
 
-        return null;
+        return CDSPositionMap;
     }
 
 
