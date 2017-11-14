@@ -10,4 +10,11 @@ public interface GeneDao {
      * @return
      */
     Dna searchGeneByType(String type);
+
+    /**
+     * 根据基因片段匹配完整基因
+     * @param fragment
+     * @return
+     */
+    Dna matchGeneByFragment(String fragment);
 }

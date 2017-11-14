@@ -33,4 +33,8 @@ public class GeneDaoImpl implements GeneDao{
 		return dna;
 	}
 
+	public Dna matchGeneByFragment(String fragment){
+		return null;
+	}
+
 }
