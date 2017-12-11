@@ -1,5 +1,7 @@
 package main.java.service;
 
+import main.java.model.AnalyseResult;
+
 import java.util.Map;
 
 public interface DefectAnalyseService {
@@ -8,29 +10,5 @@ public interface DefectAnalyseService {
      *
      * @return
      */
-    Map<String, String > getRealPosition();
-
-    /**
-     *
-     * @return
-     */
-    Map<String, String > getCDSPosition();
-
-    /**
-     *
-     * @return
-     */
-    Map<String, String > getArea();
-
-    /**
-     *
-     * @return
-     */
-    Map<String, String > getChangedInfo();
-
-    /**
-     *
-     * @return
-     */
-    Map<String, String> getAcidAnalysis();
+    Map<String, AnalyseResult> getAnalyseResult();
 }

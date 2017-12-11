@@ -31,7 +31,7 @@ public class Analyse implements java.io.Serializable {
     private String UDna;
     //确认双峰
     private String yc;
-    //意思双峰
+    //疑似双峰
     private String ys;
 
     // Constructors

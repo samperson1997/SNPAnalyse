@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import main.java.model.Analyse;
+import main.java.service.DefectAnalyseService;
 import main.java.serviceImpl.DefectAnalyse;
 import main.java.serviceImpl.DefectRecognition;
 import org.springframework.boot.SpringApplication;
@@ -73,9 +74,9 @@ public class DCollection {
 //			DataAc dataAc = new DataAc(path);
             DefectRecognition defectRecognition = new DefectRecognition(path);
 
-            DefectAnalyse defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
-            defectAnalyse.getChangedInfo();
-            defectAnalyse.getArea();
+            // TODO 这里开始异常的分析
+            DefectAnalyseService defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
+            defectAnalyse.getAnalyseResult();
 
             dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
             //
