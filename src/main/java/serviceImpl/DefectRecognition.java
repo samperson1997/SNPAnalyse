@@ -97,7 +97,7 @@ public class DefectRecognition implements DefectRecognitionService {
         System.out.println("连续双峰起始处的前20位碱基序列 " + gs);
 
         //匹配标准DNA序列
-        String ck = new GeneDaoImpl().searchGeneByType("LMF").getSort();
+        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
         ck = ck.toUpperCase();
         //匹配在序列中的位置
         int sindex = ck.indexOf(gs);
