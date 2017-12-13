@@ -36,7 +36,7 @@ public class DefectRecognition implements DefectRecognitionService {
         String la = dataMap.get("N_DNA");
         String SFInfo = dataMap.get("sf_info");
         System.out.println("-----------双峰信息----------: " + SFInfo);
-        System.out.println("-----------非正常DNA序列----------: " + la);
+        System.out.println("-----------正常DNA序列----------: " + la);
         String[] locations = la.split("");
         String res = dataMap.get("yc") + ";" + dataMap.get("ys");
         String[] temp = res.split(";");
@@ -97,10 +97,12 @@ public class DefectRecognition implements DefectRecognitionService {
         System.out.println("连续双峰起始处的前20位碱基序列 " + gs);
 
         //匹配标准DNA序列
-        String ck = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-        ck = ck.toUpperCase();
+        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
+        standardDna = standardDna.toUpperCase();
+        System.out.println(standardDna);
         //匹配在序列中的位置
-        int sindex = ck.indexOf(gs);
+        int sindex = standardDna.indexOf(gs);
+        System.out.println("sindex：" + sindex);
         //匹配失败
         if (sindex == -1) {
             return "-1;-1";
@@ -111,7 +113,7 @@ public class DefectRecognition implements DefectRecognitionService {
         System.out.println("在全长中的位置：" + gg);
         String cf = "";
         for (int i = 0; i < 20; i++) {
-            String ck_s = String.valueOf(ck.charAt(gg + i));
+            String ck_s = String.valueOf(standardDna.charAt(gg + i));
             System.out.println("===============");
             System.out.println("start + i + 1: " + (start + i + 1));
             System.out.println("ck_s: " + ck_s);
@@ -121,24 +123,28 @@ public class DefectRecognition implements DefectRecognitionService {
 //                continue;
 //            }
             String sf = sfMap.get(start + i + 1 + "");
-            if(sf != null) {
+            if (sf != null) {
                 System.out.println("sf: " + sf);
                 int d = sf.indexOf(ck_s);
                 //todo
+                if (d == -1) {
+                    d = sf.indexOf('N');
+                }
                 cf += sf.charAt(1 - d);
                 System.out.println("cf: " + cf);
-            }else{
+            } else {
                 cf += ck_s;
                 System.out.println("cf: " + cf);
             }
             System.out.println("===============");
         }
-        int eindex = ck.substring(gg).indexOf(cf);
+        int eindex = standardDna.substring(gg).indexOf(cf);
+//        int eindex = standardDna.indexOf(cf);
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("cf: " + cf);
         System.out.println("eindex: " + eindex);
         System.out.println("....................");
-        if (ck.indexOf(cf) == -1) {
+        if (standardDna.indexOf(cf) == -1) {
             return sindex + ";-1";
         } else {
             return sindex + ";" + (eindex - 1);
@@ -177,6 +183,7 @@ public class DefectRecognition implements DefectRecognitionService {
         String r1 = "";
         String r2 = "";
         String[] DNA = dataMap.get("PBAS 2").split("");
+//        System.out.println(DNA.toString());
         String[] location = dataMap.get("PLOC 2").split(";");
         String[] data9 = dataMap.get("DATA 9").split(";");
         String[] data10 = dataMap.get("DATA 10").split(";");
@@ -212,7 +219,6 @@ public class DefectRecognition implements DefectRecognitionService {
             }
             s++;
         }
-
 
         for (int i = start; i < location.length - end; i++) {
             data = new HashMap<String, Integer>();
