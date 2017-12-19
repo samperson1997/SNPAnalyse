@@ -151,6 +151,39 @@ public class DefectRecognition implements DefectRecognitionService {
         }
     }
 
+    /**
+     * 获得在全长中的位置
+     */
+    public void getLocations(int start) {
+        String la = dataMap.get("N_DNA");
+        System.out.println("-----------正常DNA序列----------: " + la);
+        String[] locations = la.split("");
+
+        String gs = "";
+
+        for (int h = start - 20; h < start; h++) {
+            gs += locations[h];
+        }
+
+        System.out.println("连续双峰起始处的前20位碱基序列 " + gs);
+
+        //匹配标准DNA序列
+        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
+        standardDna = standardDna.toUpperCase();
+        System.out.println(standardDna);
+        //匹配在序列中的位置
+        int sindex = standardDna.indexOf(gs);
+        System.out.println("sindex：" + sindex);
+        //匹配失败
+        if (sindex == -1) {
+            //todo
+//            return "-1;-1";
+        }
+
+        //匹配成功
+        int gg = sindex + gs.length();
+        System.out.println("在全长中的位置：" + gg);
+    }
 
     private int getMaxOfRange(String[] data, String location, int round) {
         Map<Integer, Integer> map = new HashMap<Integer, Integer>();
