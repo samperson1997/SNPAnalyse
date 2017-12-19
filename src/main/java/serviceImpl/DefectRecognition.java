@@ -256,35 +256,44 @@ public class DefectRecognition implements DefectRecognitionService {
         }
 
         for (int i = start; i < location.length - end; i++) {
-            data = new HashMap<String, Integer>();
+            List<Map.Entry<String, Integer>> curValues = getTwoLargerValue(channelMap, data9, data10, data11, data12, location, i, round);
+            List<Map.Entry<String, Integer>> preValues = getTwoLargerValue(channelMap, data9, data10, data11, data12, location, i - 1, round);
+            List<Map.Entry<String, Integer>> postValues = getTwoLargerValue(channelMap, data9, data10, data11, data12, location, i + 1, round);
 
-            data.put(channelMap.get("data9"), getMaxOfRange(data9, location[i], round));
-            data.put(channelMap.get("data10"), getMaxOfRange(data10, location[i], round));
-            data.put(channelMap.get("data11"), getMaxOfRange(data11, location[i], round));
-            data.put(channelMap.get("data12"), getMaxOfRange(data12, location[i], round));
+            Map.Entry<String, Integer> e1 = curValues.get(0);
+            Map.Entry<String, Integer> e2 = curValues.get(1);
+            Map.Entry<String, Integer> preE1 = getSameKeyMapEntry(e1, preValues);
+            Map.Entry<String, Integer> postE1 = getSameKeyMapEntry(e1, postValues);
+            Map.Entry<String, Integer> preE2 = getSameKeyMapEntry(e2, preValues);
+            Map.Entry<String, Integer> postE2 = getSameKeyMapEntry(e2, postValues);
 
-            Map<String, Integer> sortedMap = sortMap(data);
+            double n1 = e1.getValue();
+            double n2 = e2.getValue();
+            double preN1 = preE1.getValue();
+            double preN2 = preE2.getValue();
+            double postN1 = postE1.getValue();
+            double postN2 = postE2.getValue();
 
-            Iterator<Map.Entry<String, Integer>> it = sortedMap.entrySet().iterator();
 
-            Map.Entry<String, Integer> e1 = it.next();
-            Map.Entry<String, Integer> e2 = it.next();
-
-            float n1 = e1.getValue();
-            float n2 = e2.getValue();
-
+//            System.out.println("===================");
+//            System.out.println("i: " + i);
+//            System.out.println("n1: " + n1);
+//            System.out.println("n2: " + n2);
+//            System.out.println("===================");
 
             if (n1 != 0 && n2 != 0) {
 
-                if (n2 / n1 > tv1) {
-                    confirmedDoublePeak.add(i);
-                    DNA[i] = e2.getKey();
-                    doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
-                    r1 += (i + 1 + ";");
-                } else if (n2 / n1 < tv1 && n2 / n1 > tv2) {
-                    suspectedDoublePeak.add(i);
-                    doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
-                    r2 += (i + 1 + ";");
+                if (n1 >= preN1 && n2 >= preN2 && n1 >= postN1 && n2 >= postN2) {
+                    if (n2 / n1 > tv1) {
+                        confirmedDoublePeak.add(i);
+                        DNA[i] = e2.getKey();
+                        doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
+                        r1 += (i + 1 + ";");
+                    } else if (n2 / n1 < tv1 && n2 / n1 > tv2) {
+                        suspectedDoublePeak.add(i);
+                        doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
+                        r2 += (i + 1 + ";");
+                    }
                 }
             }
 
@@ -306,22 +315,41 @@ public class DefectRecognition implements DefectRecognitionService {
             r2 = r2.substring(0, r2.length() - 1);
         }
 
-//        System.out.println("============yc============");
-//        System.out.println(r1);
-//        System.out.println("============ys============");
-//        System.out.println(r2);
-
         dataMap.put("yc", r1);
         dataMap.put("ys", r2);
         dataMap.put("U_DNA", U_DNA);
         dataMap.put("N_DNA", N_DNA);
         dataMap.put("sf_info", doublePeakInfo);
-
-//        System.out.println("U_DNA:" + U_DNA);
-//        System.out.println("N_DNA:" + N_DNA);
-//        System.out.println("sf_info:" + doublePeakInfo);
-
         return dataMap;
+    }
+
+    private List<Map.Entry<String, Integer>> getTwoLargerValue(Map<String, String> channelMap, String[] data9, String[] data10, String[] data11, String[] data12, String[] location, int i, int round) {
+        Map<String, Integer> data = new HashMap<String, Integer>();
+
+        data.put(channelMap.get("data9"), getMaxOfRange(data9, location[i], round));
+        data.put(channelMap.get("data10"), getMaxOfRange(data10, location[i], round));
+        data.put(channelMap.get("data11"), getMaxOfRange(data11, location[i], round));
+        data.put(channelMap.get("data12"), getMaxOfRange(data12, location[i], round));
+
+        Map<String, Integer> sortedMap = sortMap(data);
+
+        Iterator<Map.Entry<String, Integer>> it = sortedMap.entrySet().iterator();
+
+        List<Map.Entry<String, Integer>> list = new ArrayList<>();
+        for (int j = 0; j < 4; j++) {
+            list.add(it.next());
+        }
+        return list;
+    }
+
+    private Map.Entry<String, Integer> getSameKeyMapEntry(Map.Entry<String, Integer> entry, List<Map.Entry<String, Integer>> entries) {
+        for (int i = 0; i < entries.size(); i++) {
+            if (entry.getKey().equals(entries.get(i).getKey())) {
+                return entries.get(i);
+            }
+        }
+
+        return null;
     }
 
     private <T> Map<T, Integer> sortMap(Map<T, Integer> oldMap) {

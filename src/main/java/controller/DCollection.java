@@ -75,16 +75,16 @@ public class DCollection {
             DefectRecognition defectRecognition = new DefectRecognition(path);
 
             // TODO 这里开始异常的分析
-            DefectAnalyseService defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
-            defectAnalyse.getAnalyseResult();
+//            DefectAnalyseService defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
+//            defectAnalyse.getAnalyseResult();
 
             dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
             //
-//            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
+            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
                 String lack = defectRecognition.getMissGeneSort(dm);
                 System.out.println("-----lack-------: " + lack);
-//                dm.put("lack_gene", lack);
-//            }
+                dm.put("lack_gene", lack);
+            }
             //
             jsonObject = JSONObject.fromObject(dm);
 
