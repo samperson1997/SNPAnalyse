@@ -134,7 +134,6 @@ public class DefectAnalyse implements DefectAnalyseService {
                 }
 
                 // 找密码子对应的氨基酸
-//                analyseResult.setChangedSecret("方法有点问题");
                 analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getChs_name() + "=>"
                         + analyseDao.getSecret(U_secret).getChs_name());
             } else {
