@@ -5,7 +5,6 @@ import main.java.dao.GeneDao;
 import main.java.daoImpl.AnalyseDaoImpl;
 import main.java.daoImpl.GeneDaoImpl;
 import main.java.model.AnalyseResult;
-import main.java.model.Dna;
 import main.java.service.DefectAnalyseService;
 
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ public class DefectAnalyse implements DefectAnalyseService {
     //TODO 目前只针对LPL
     private final String LPL = geneDao.searchGeneByType("LPL").getSort();
     private final String LPL_CDS = geneDao.searchGeneByType("LPL").getCds();
-    private String N_DNA;
 
     private int[] CDS_start = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     private int[] CDS_end = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -46,8 +44,7 @@ public class DefectAnalyse implements DefectAnalyseService {
         DefectRecognition defectRecognition = new DefectRecognition(path);
         dataMap = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
         analyseDao = new AnalyseDaoImpl();
-        N_DNA = dataMap.get("N_DNA");
-        Dna stdDna = geneDao.matchGeneByFragment(N_DNA.substring(0, 20));
+//        Dna stdDna = geneDao.matchGeneByFragment(N_DNA.substring(0, 20));
 //        stdGene = stdDna.getSort();
 //        stdCDS = stdDna.getCds();
         CDS = new ArrayList<>();
@@ -64,7 +61,8 @@ public class DefectAnalyse implements DefectAnalyseService {
         List<String> changedList = new ArrayList<>();
 
         //TODO 目前只针对LPL, 后面需要首先判断是什么类型的基因, 再找位置
-        int firstPosition = LPL.indexOf(N_DNA);
+        String n_DNA = dataMap.get("N_DNA");
+        int firstPosition = LPL.indexOf(n_DNA);
 
         for (int i = 0; i < dataMap.get("sf_info").split(";").length; i++) {
             changedList.add(dataMap.get("sf_info").split(";")[i]);
@@ -74,7 +72,7 @@ public class DefectAnalyse implements DefectAnalyseService {
             /**
              * 异常在完整DNA片段上的真实位置
              */
-            int realPosition = Integer.parseInt(changedInfo[0]) + firstPosition + 1;
+            int realPosition = getLocations(Integer.parseInt(changedInfo[0]));
             analyseResult.setRealPosition(realPosition);
 
             /**
@@ -82,12 +80,15 @@ public class DefectAnalyse implements DefectAnalyseService {
              * 先判断在CDS上，再计算异常在完整CDS片段上的真实位置
              */
             int CDSPosition = 0;
+            String area = "inner";
             if (isCDS(realPosition)) {
+                area = "outer";
                 for (int j = 0; j < CDSs.length; j++) {
                     if (CDS_end[j] < realPosition) {
                         CDSPosition += (CDS_end[j] - CDS_start[j]);
                     } else {
                         CDSPosition += (realPosition - CDS_start[j]);
+                        break;
                     }
                 }
             }
@@ -96,10 +97,6 @@ public class DefectAnalyse implements DefectAnalyseService {
             /**
              * 异常所在DNA片段区域
              */
-            String area = "inner";
-            if (isCDS(realPosition)) {
-                area = "outer";
-            }
             analyseResult.setArea(area);
 
             /**
@@ -120,20 +117,24 @@ public class DefectAnalyse implements DefectAnalyseService {
                 if (CDSPosition % 3 == 0) {
                     N_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition + 1);
                     U_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition) + changedInformation.substring(3);
+                    System.out.println("CDSPosition % 3 == 0");
                 }
                 // 余数为1，向后拼接两位碱基构成密码子
                 else if (CDSPosition % 3 == 1) {
                     N_secret = LPL_CDS.substring(CDSPosition, CDSPosition + 3);
                     U_secret = changedInformation.substring(3) + LPL_CDS.substring(CDSPosition, CDSPosition + 2);
+                    System.out.println("CDSPosition % 3 == 1");
                 }
                 // 余数为2，取一前一后两位碱基构成密码子
                 else if (CDSPosition % 3 == 2) {
                     N_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition + 2);
                     U_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition) + changedInformation.substring(3)
                             + LPL_CDS.substring(CDSPosition + 1, CDSPosition + 2);
+                    System.out.println("CDSPosition % 3 == 2");
                 }
 
                 // 找密码子对应的氨基酸
+//                analyseResult.setChangedSecret("方法有点问题");
                 analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getChs_name() + "=>"
                         + analyseDao.getSecret(U_secret).getChs_name());
             } else {
@@ -197,5 +198,25 @@ public class DefectAnalyse implements DefectAnalyseService {
             geneCursor = gStart;
             i = cStart;
         }
+    }
+
+    /**
+     * 获得在全长中的位置
+     */
+    private int getLocations(int start) {
+        String[] locations = dataMap.get("N_DNA").split("");
+        String gs = "";
+
+        for (int h = start - 20; h < start; h++) {
+            gs += locations[h];
+        }
+        //匹配标准DNA序列
+        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+        standardDna = standardDna.toUpperCase();
+        //匹配在序列中的位置
+        int sindex = standardDna.indexOf(gs);
+
+        //匹配成功
+        return sindex + gs.length() - 1;
     }
 }
