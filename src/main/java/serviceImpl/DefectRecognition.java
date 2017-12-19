@@ -97,7 +97,8 @@ public class DefectRecognition implements DefectRecognitionService {
         System.out.println("连续双峰起始处的前20位碱基序列 " + gs);
 
         //匹配标准DNA序列
-        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
+        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+//        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
         standardDna = standardDna.toUpperCase();
         System.out.println(standardDna);
         //匹配在序列中的位置
@@ -114,9 +115,9 @@ public class DefectRecognition implements DefectRecognitionService {
         String cf = "";
         for (int i = 0; i < 20; i++) {
             String ck_s = String.valueOf(standardDna.charAt(gg + i));
-            System.out.println("===============");
-            System.out.println("start + i + 1: " + (start + i + 1));
-            System.out.println("ck_s: " + ck_s);
+//            System.out.println("===============");
+//            System.out.println("start + i + 1: " + (start + i + 1));
+//            System.out.println("ck_s: " + ck_s);
             //todo 修改此处匹配方式 此方法有漏洞
 //            if (res.indexOf(start + i + 1 + "") == -1) {
 //                cf += ck_s;
@@ -136,7 +137,7 @@ public class DefectRecognition implements DefectRecognitionService {
                 cf += ck_s;
                 System.out.println("cf: " + cf);
             }
-            System.out.println("===============");
+//            System.out.println("===============");
         }
         int eindex = standardDna.substring(gg).indexOf(cf);
 //        int eindex = standardDna.indexOf(cf);
@@ -168,7 +169,8 @@ public class DefectRecognition implements DefectRecognitionService {
         System.out.println("连续双峰起始处的前20位碱基序列 " + gs);
 
         //匹配标准DNA序列
-        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
+        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+//        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
         standardDna = standardDna.toUpperCase();
         System.out.println(standardDna);
         //匹配在序列中的位置
