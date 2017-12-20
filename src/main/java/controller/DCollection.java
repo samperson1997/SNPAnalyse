@@ -38,7 +38,7 @@ public class DCollection {
         double tv1 = 0.6;  //确认双峰阈值
         double tv2 = 0.5;  //疑似双峰阈值
 
-        Map<String, String> dm = new HashMap<String, String>();
+        Map<String, String> dm;
 
         if (request.getParameter("start") != null) {
             start = Integer.valueOf(request.getParameter("start"));

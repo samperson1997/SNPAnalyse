@@ -332,14 +332,7 @@ public class DefectRecognition implements DefectRecognitionService {
         data.put(channelMap.get("data12"), getMaxOfRange(data12, location[i], round));
 
         Map<String, Integer> sortedMap = sortMap(data);
-
-        Iterator<Map.Entry<String, Integer>> it = sortedMap.entrySet().iterator();
-
-        List<Map.Entry<String, Integer>> list = new ArrayList<>();
-        for (int j = 0; j < 4; j++) {
-            list.add(it.next());
-        }
-        return list;
+        return new ArrayList<>(sortedMap.entrySet());
     }
 
     private Map.Entry<String, Integer> getSameKeyMapEntry(Map.Entry<String, Integer> entry, List<Map.Entry<String, Integer>> entries) {
