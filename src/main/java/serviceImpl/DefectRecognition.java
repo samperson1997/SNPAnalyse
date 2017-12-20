@@ -203,12 +203,18 @@ public class DefectRecognition implements DefectRecognitionService {
             Map.Entry<Integer, Integer> entry = it.next();
             int tk = entry.getKey();
             if (tk > start && tk < end && map.get(tk) >= map.get(tk - 1) && map.get(tk) >= map.get(tk + 1)) {
+//                System.out.println("!=========================");
+//                System.out.println("location: " + location);
+//                System.out.println("cur: " + entry.getValue());
+//                System.out.println("!=========================");
+
                 return entry.getValue();
             }
         }
 
-        return Integer.valueOf(data[(start + end) / 2]);
+        return -Integer.valueOf(data[(start + end) / 2]);
 
+//        return 0;
     }
 
 
@@ -261,9 +267,10 @@ public class DefectRecognition implements DefectRecognitionService {
             List<Map.Entry<String, Integer>> postValues = getTwoLargerValue(channelMap, data9, data10, data11, data12, location, i + 1, round);
 
             Map.Entry<String, Integer> e1 = curValues.get(0);
-            Map.Entry<String, Integer> e2 = curValues.get(1);
             Map.Entry<String, Integer> preE1 = getSameKeyMapEntry(e1, preValues);
             Map.Entry<String, Integer> postE1 = getSameKeyMapEntry(e1, postValues);
+
+            Map.Entry<String, Integer> e2 = curValues.get(1);
             Map.Entry<String, Integer> preE2 = getSameKeyMapEntry(e2, preValues);
             Map.Entry<String, Integer> postE2 = getSameKeyMapEntry(e2, postValues);
 
@@ -274,16 +281,18 @@ public class DefectRecognition implements DefectRecognitionService {
             double postN1 = postE1.getValue();
             double postN2 = postE2.getValue();
 
+//
+            System.out.println("===================");
+            System.out.println("i: " + i);
+            System.out.println("n1: " + n1);
+            System.out.println("n2: " + n2);
+//            System.out.println("r1: " + r1);
+//            System.out.println("r2: " + r2);
+            System.out.println("===================");
 
-//            System.out.println("===================");
-//            System.out.println("i: " + i);
-//            System.out.println("n1: " + n1);
-//            System.out.println("n2: " + n2);
-//            System.out.println("===================");
+            if (n1 > 0 && n2 != 0 ) {
 
-            if (n1 != 0 && n2 != 0) {
-
-                if (n1 >= preN1 && n2 >= preN2 && n1 >= postN1 && n2 >= postN2) {
+//                if (n1 >= preN1 && n2 >= preN2 && n1 >= postN1 && n2 >= postN2) {
                     if (n2 / n1 > tv1) {
                         confirmedDoublePeak.add(i);
                         DNA[i] = e2.getKey();
@@ -294,7 +303,7 @@ public class DefectRecognition implements DefectRecognitionService {
                         doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
                         r2 += (i + 1 + ";");
                     }
-                }
+//                }
             }
 
         }
@@ -311,15 +320,14 @@ public class DefectRecognition implements DefectRecognitionService {
         r2 = util.deleteEnd(r2);
         doublePeakInfo = util.deleteEnd(doublePeakInfo);
 
-        if (r2.length() > 0) {
-            r2 = r2.substring(0, r2.length() - 1);
-        }
-
         dataMap.put("yc", r1);
         dataMap.put("ys", r2);
         dataMap.put("U_DNA", U_DNA);
         dataMap.put("N_DNA", N_DNA);
         dataMap.put("sf_info", doublePeakInfo);
+
+//        System.out.println(r1);
+//        System.out.println(r2);
         return dataMap;
     }
 
@@ -351,7 +359,7 @@ public class DefectRecognition implements DefectRecognitionService {
 
             @Override
             public int compare(Map.Entry<T, Integer> arg0, Map.Entry<T, Integer> arg1) {
-                return arg1.getValue() - arg0.getValue();
+                return Math.abs(arg1.getValue()) - Math.abs(arg0.getValue());
             }
         });
         Map<T, Integer> newMap = new LinkedHashMap<T, Integer>();

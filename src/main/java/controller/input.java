@@ -1,5 +1,8 @@
 package main.java.controller;
 
+import main.java.dao.AnalyseDao;
+import main.java.daoImpl.AnalyseDaoImpl;
+import main.java.model.Analyse;
 import main.java.serviceImpl.DefectRecognition;
 
 import java.io.File;
@@ -43,11 +46,26 @@ public class input {
 
             Map<String, String> dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
 
-            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
-                String lack = defectRecognition.getMissGeneSort(dm);
-                System.out.println("-----lack-------: " + lack);
-                dm.put("lack_gene", lack);
-            }
+            Analyse analyse = new Analyse();
+            analyse.setFileName(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1]);
+            analyse.setData9(dm.get("DATA 9"));
+            analyse.setData10(dm.get("DATA 10"));
+            analyse.setData11(dm.get("DATA 11"));
+            analyse.setData12(dm.get("DATA 12"));
+            analyse.setDna(dm.get("N_DNA"));
+            analyse.setUDna(dm.get("U_DNA"));
+            analyse.setYc(dm.get("yc"));
+            analyse.setYs(dm.get("ys"));
+            analyse.setLocation(dm.get("PLOC 2"));
+
+            AnalyseDao analyseDao = new AnalyseDaoImpl();
+            analyseDao.saveAnalyseRes(analyse);
+
+//            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
+//                String lack = defectRecognition.getMissGeneSort(dm);
+//                System.out.println("-----lack-------: " + lack);
+//                dm.put("lack_gene", lack);
+//            }
         }
     }
 }
