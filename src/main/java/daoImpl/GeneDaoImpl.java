@@ -34,7 +34,17 @@ public class GeneDaoImpl implements GeneDao{
 	}
 
 	public Dna matchGeneByFragment(String fragment){
-		return null;
+		Session session= HibernateSessionFactory.getSession();
+		Query query = session.createQuery("FROM Dna D WHERE D.sort LIKE ?");
+		query.setString(0, "%" + fragment+ "%");
+		List result = query.list();
+		Dna dna=new Dna();
+
+		for( int i = 0;  i < result.size();  i ++ ) {
+			dna = (Dna)result.get(i);
+		}
+		session.getTransaction().commit();
+		return dna;
 	}
 
 }

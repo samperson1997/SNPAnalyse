@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="main.java.model.Dna" table="dna">
+        <meta attribute="class-description">
+            This class contains DNA info.
+        </meta>
+        <id name="type"></id>
+        <property name="type" column="type" type="string"/>
+        <property name="sort" column="sort" type="string"/>
+        <property name="cds" column="cds" type="int"/>
+    </class>
+</hibernate-mapping>
