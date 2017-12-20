@@ -5,6 +5,8 @@ import main.java.util.HibernateSessionFactory;
 import main.java.model.Dna;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.Query;
+import java.util.List;
 
 public class GeneDaoImpl implements GeneDao{
 	
@@ -35,7 +37,7 @@ public class GeneDaoImpl implements GeneDao{
 
 	public Dna matchGeneByFragment(String fragment){
 		Session session= HibernateSessionFactory.getSession();
-		Query query = session.createQuery("FROM Dna D WHERE D.sort LIKE ?");
+		Query query = session.createQuery("FROM main.java.model.Dna D WHERE D.sort LIKE ?");
 		query.setString(0, "%" + fragment+ "%");
 		List result = query.list();
 		Dna dna=new Dna();
