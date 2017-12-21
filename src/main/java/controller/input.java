@@ -3,6 +3,7 @@ package main.java.controller;
 import main.java.dao.AnalyseDao;
 import main.java.daoImpl.AnalyseDaoImpl;
 import main.java.model.Analyse;
+import main.java.model.AnalyseResult;
 import main.java.service.DefectAnalyseService;
 import main.java.serviceImpl.DefectAnalyse;
 import main.java.serviceImpl.DefectRecognition;
@@ -19,7 +20,7 @@ public class input {
     }
 
     private static void traverseFolder(String path) throws IOException {
-
+        int count = 0;
         File file = new File(path);
         if (file.exists()) {
             File[] files = file.listFiles();
@@ -31,6 +32,8 @@ public class input {
                 } else {
                     System.out.println("file:" + file2.getAbsolutePath());
                     startTest(file2);
+                    count++;
+                    System.out.println(count);
                 }
             }
 
@@ -82,8 +85,15 @@ public class input {
         int end = 10;
         double tv1 = 0.6;  //确认双峰阈值
         double tv2 = 0.5;  //疑似双峰阈值
-        DefectRecognition defectRecognition = new DefectRecognition(mFile.getAbsolutePath());
         DefectAnalyseService defectAnalyse = new DefectAnalyse(mFile.getAbsolutePath(), start, end, tv1, tv2);
-        defectAnalyse.getAnalyseResult();
+        Map<String, AnalyseResult> analyseResultMap = defectAnalyse.getAnalyseResult();
+
+        for (Map.Entry<String, AnalyseResult> entry : analyseResultMap.entrySet()) {
+            AnalyseResult analyseResult = entry.getValue();
+            analyseResult.setFileName(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1]);
+
+            AnalyseDao analyseDao = new AnalyseDaoImpl();
+            analyseDao.saveAnalyseResultRes(analyseResult);
+        }
     }
 }

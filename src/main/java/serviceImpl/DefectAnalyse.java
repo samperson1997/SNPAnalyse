@@ -150,13 +150,13 @@ public class DefectAnalyse implements DefectAnalyseService {
 
                     // 找密码子对应的氨基酸
                     if(isWrongResult){
-                        analyseResult.setChangedSecret("分析错误");
+                        analyseResult.setChangedSecret("wrong analyse result");
                     } else {
                         if (analyseDao.getSecret(U_secret) == null) {
-                            analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getChs_name() + "=>unknown amino acid");
+                            analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getSim_name() + "=>unknown amino acid");
                         } else {
-                            analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getChs_name() + "=>"
-                                    + analyseDao.getSecret(U_secret).getChs_name());
+                            analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getSim_name() + "=>"
+                                    + analyseDao.getSecret(U_secret).getSim_name());
                         }
                     }
                 } else {
