@@ -3,6 +3,7 @@ package main.java.serviceImpl;
 import main.java.daoImpl.GeneDaoImpl;
 import main.java.service.DefectRecognitionService;
 import main.java.util.Util;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 
 import java.util.*;
 
@@ -189,8 +190,9 @@ public class DefectRecognition implements DefectRecognitionService {
 
     private int getMaxOfRange(String[] data, String location, int round) {
         Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-        int start = Integer.valueOf(location) - round;
-        int end = Integer.valueOf(location) + round;
+        int half = round / 2 + 1;
+        int start = Integer.valueOf(location) - half;
+        int end = Integer.valueOf(location) + half;
         for (int n = start; n <= end; n++) {
             map.put(n, Integer.valueOf(data[n]));
         }
@@ -230,6 +232,12 @@ public class DefectRecognition implements DefectRecognitionService {
         String[] data10 = dataMap.get("DATA 10").split(";");
         String[] data11 = dataMap.get("DATA 11").split(";");
         String[] data12 = dataMap.get("DATA 12").split(";");
+        System.out.println(dataMap.get("PBAS 2"));
+        System.out.println(dataMap.get("PLOC 2"));
+        System.out.println(dataMap.get("DATA 9"));
+        System.out.println(dataMap.get("DATA 10"));
+        System.out.println(dataMap.get("DATA 11"));
+        System.out.println(dataMap.get("DATA 12"));
 
         //正常的DNA序列
         String N_DNA = "";
@@ -243,23 +251,14 @@ public class DefectRecognition implements DefectRecognitionService {
         ArrayList<Integer> confirmedDoublePeak = new ArrayList<Integer>(); //确认双峰异常 原变量名为：yc
         ArrayList<Integer> suspectedDoublePeak = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
         int round = data9.length / location.length / 2;
+        System.out.println("round: " + round);
 
         Map<String, String> channelMap = new HashMap<String, String>();
-        int s = start;
-        while (channelMap.size() < 4) {
-            Map<String, Integer> type = new HashMap<String, Integer>(4);
-            type.put("data9", Integer.valueOf(data9[Integer.valueOf(location[s])]));
-            type.put("data10", Integer.valueOf(data10[Integer.valueOf(location[s])]));
-            type.put("data11", Integer.valueOf(data11[Integer.valueOf(location[s])]));
-            type.put("data12", Integer.valueOf(data12[Integer.valueOf(location[s])]));
-            Map<String, Integer> temp = sortMap(type);
-            Iterator<Map.Entry<String, Integer>> it = temp.entrySet().iterator();
-            String ts = it.next().getKey();
-            if (channelMap.get(ts) == null) {
-                channelMap.put(ts, DNA[s]);
-            }
-            s++;
-        }
+//        int s = start;
+        channelMap.put("data9", "G");
+        channelMap.put("data10", "A");
+        channelMap.put("data11", "T");
+        channelMap.put("data12", "C");
 
         for (int i = start; i < location.length - end; i++) {
             List<Map.Entry<String, Integer>> curValues = getTwoLargerValue(channelMap, data9, data10, data11, data12, location, i, round);
@@ -338,8 +337,25 @@ public class DefectRecognition implements DefectRecognitionService {
         data.put(channelMap.get("data10"), getMaxOfRange(data10, location[i], round));
         data.put(channelMap.get("data11"), getMaxOfRange(data11, location[i], round));
         data.put(channelMap.get("data12"), getMaxOfRange(data12, location[i], round));
+//        System.out.println("=====================");
+//
+//        System.out.println(channelMap.get("data9") + " :" + data.get(channelMap.get("data9")));
+//        System.out.println(channelMap.get("data10") + " :" + data.get(channelMap.get("data10")));
+//        System.out.println(channelMap.get("data11") + " :" + data.get(channelMap.get("data11")));
+//        System.out.println(channelMap.get("data12") + " :" + data.get(channelMap.get("data12")));
+//        System.out.println("preMapSize: " + data.size());
+//
+//        for (String key: data.keySet()) {
+//            System.out.println(key);
+//        }
 
         Map<String, Integer> sortedMap = sortMap(data);
+//        System.out.println("postMapSize: " + sortedMap.size());
+//        System.out.println("=====================");
+//        for (String key: sortedMap.keySet()) {
+//            System.out.println(sortedMap.get(key));
+//        }
+//        System.out.println("=====================");
         return new ArrayList<>(sortedMap.entrySet());
     }
 
@@ -363,9 +379,16 @@ public class DefectRecognition implements DefectRecognitionService {
             }
         });
         Map<T, Integer> newMap = new LinkedHashMap<T, Integer>();
+//        System.out.println("=====================");
+
         for (int i = 0; i < list.size(); i++) {
+//            if (list.size() < 5) {
+//                System.out.println(list.get(i).getValue());
+//            }
             newMap.put(list.get(i).getKey(), list.get(i).getValue());
         }
+//        System.out.println("=====================");
+
         return newMap;
     }
 

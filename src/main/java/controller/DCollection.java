@@ -33,7 +33,7 @@ public class DCollection {
     @RequestMapping(value = "upload", method = RequestMethod.POST)
     public String getAll(HttpServletRequest request) throws IOException {
         JSONObject jsonObject = null;
-        int start = 20;
+        int start = 35;
         int end = 10;
         double tv1 = 0.6;  //确认双峰阈值
         double tv2 = 0.5;  //疑似双峰阈值
