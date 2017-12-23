@@ -281,13 +281,13 @@ public class DefectRecognition implements DefectRecognitionService {
             double postN2 = postE2.getValue();
 
 //
-            System.out.println("===================");
-            System.out.println("i: " + i);
-            System.out.println("n1: " + n1);
-            System.out.println("n2: " + n2);
+//            System.out.println("===================");
+//            System.out.println("i: " + i);
+//            System.out.println("n1: " + n1);
+//            System.out.println("n2: " + n2);
 //            System.out.println("r1: " + r1);
 //            System.out.println("r2: " + r2);
-            System.out.println("===================");
+//            System.out.println("===================");
 
             if (n1 > 0 && n2 != 0 ) {
 

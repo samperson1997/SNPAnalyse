@@ -72,77 +72,101 @@ public class DefectAnalyse implements DefectAnalyseService {
             /**
              * 异常在完整DNA片段上的真实位置
              */
-            int realPosition = getLocations(Integer.parseInt(changedInfo[0]));
-            analyseResult.setRealPosition(realPosition);
+            if (!changedInfo[0].equals("")) {
+                int realPosition = getLocations(Integer.parseInt(changedInfo[0]));
 
-            /**
-             * 异常在完整CDS片段上的真实位置
-             * 先判断在CDS上，再计算异常在完整CDS片段上的真实位置
-             */
-            int CDSPosition = 0;
-            String area = "inner";
-            if (isCDS(realPosition)) {
-                area = "outer";
-                for (int j = 0; j < CDSs.length; j++) {
-                    if (CDS_end[j] < realPosition) {
-                        CDSPosition += (CDS_end[j] - CDS_start[j]);
-                    } else {
-                        CDSPosition += (realPosition - CDS_start[j]);
-                        break;
+                analyseResult.setRealPosition(realPosition);
+
+                /**
+                 * 异常在完整CDS片段上的真实位置
+                 * 先判断在CDS上，再计算异常在完整CDS片段上的真实位置
+                 */
+                int CDSPosition = 0;
+                String area = "inner";
+                if (isCDS(realPosition)) {
+                    area = "outer";
+                    for (int j = 0; j < CDSs.length; j++) {
+                        if (CDS_end[j] < realPosition) {
+                            CDSPosition += (CDS_end[j] - CDS_start[j]);
+                        } else {
+                            CDSPosition += (realPosition - CDS_start[j]);
+                            break;
+                        }
                     }
                 }
+                analyseResult.setCDSPosition(CDSPosition);
+
+                /**
+                 * 异常所在DNA片段区域
+                 */
+                analyseResult.setArea(area);
+
+                /**
+                 * 异常变化信息
+                 */
+                String changedInformation = changedInfo[1].charAt(0) + "=>" + changedInfo[1].charAt(1);
+                analyseResult.setChangedInfo(changedInformation);
+
+                /**
+                 * 氨基酸变化信息
+                 */
+                // 非内显子, 继续分析
+                if (!area.equals("inner")) {
+                    String U_secret = ""; // 异常密码子
+                    String N_secret = ""; // 正常密码子
+
+                    boolean isWrongResult = false;
+                    // 余数为0，向前拼接两位碱基构成密码子
+                    if (CDSPosition % 3 == 0) {
+                        if (CDSPosition < 2) {
+                            isWrongResult = true;
+                        } else {
+                            N_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition + 1);
+                            U_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition) + changedInformation.substring(3);
+                            System.out.println("CDSPosition % 3 == 0");
+                        }
+                    }
+                    // 余数为1，向后拼接两位碱基构成密码子
+                    else if (CDSPosition % 3 == 1) {
+                        if (CDSPosition < 0) {
+                            isWrongResult = true;
+                        } else {
+                            N_secret = LPL_CDS.substring(CDSPosition, CDSPosition + 3);
+                            U_secret = changedInformation.substring(3) + LPL_CDS.substring(CDSPosition, CDSPosition + 2);
+                            System.out.println("CDSPosition % 3 == 1");
+                        }
+                    }
+                    // 余数为2，取一前一后两位碱基构成密码子
+                    else if (CDSPosition % 3 == 2) {
+                        if (CDSPosition < 1) {
+                            isWrongResult = true;
+                        } else {
+                            N_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition + 2);
+                            U_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition) + changedInformation.substring(3)
+                                    + LPL_CDS.substring(CDSPosition + 1, CDSPosition + 2);
+                            System.out.println("CDSPosition % 3 == 2");
+                        }
+                    }
+
+                    // 找密码子对应的氨基酸
+                    if(isWrongResult){
+                        analyseResult.setChangedSecret("wrong analyse result");
+                    } else {
+                        if (analyseDao.getSecret(U_secret) == null) {
+                            analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getSim_name() + "=>unknown amino acid");
+                        } else {
+                            analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getSim_name() + "=>"
+                                    + analyseDao.getSecret(U_secret).getSim_name());
+                        }
+                    }
+                } else {
+                    analyseResult.setChangedSecret("-");
+                }
+
+                // 打印
+                System.out.println(analyseResult.toString());
+                analyseResultMap.put(changedInfo[0], analyseResult);
             }
-            analyseResult.setCDSPosition(CDSPosition);
-
-            /**
-             * 异常所在DNA片段区域
-             */
-            analyseResult.setArea(area);
-
-            /**
-             * 异常变化信息
-             */
-            String changedInformation = changedInfo[1].charAt(0) + "=>" + changedInfo[1].charAt(1);
-            analyseResult.setChangedInfo(changedInformation);
-
-            /**
-             * 氨基酸变化信息
-             */
-            // 非内显子, 继续分析
-            if (!area.equals("inner")) {
-                String U_secret = ""; // 异常密码子
-                String N_secret = ""; // 正常密码子
-
-                // 余数为0，向前拼接两位碱基构成密码子
-                if (CDSPosition % 3 == 0) {
-                    N_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition + 1);
-                    U_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition) + changedInformation.substring(3);
-                    System.out.println("CDSPosition % 3 == 0");
-                }
-                // 余数为1，向后拼接两位碱基构成密码子
-                else if (CDSPosition % 3 == 1) {
-                    N_secret = LPL_CDS.substring(CDSPosition, CDSPosition + 3);
-                    U_secret = changedInformation.substring(3) + LPL_CDS.substring(CDSPosition, CDSPosition + 2);
-                    System.out.println("CDSPosition % 3 == 1");
-                }
-                // 余数为2，取一前一后两位碱基构成密码子
-                else if (CDSPosition % 3 == 2) {
-                    N_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition + 2);
-                    U_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition) + changedInformation.substring(3)
-                            + LPL_CDS.substring(CDSPosition + 1, CDSPosition + 2);
-                    System.out.println("CDSPosition % 3 == 2");
-                }
-
-                // 找密码子对应的氨基酸
-                analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getChs_name() + "=>"
-                        + analyseDao.getSecret(U_secret).getChs_name());
-            } else {
-                analyseResult.setChangedSecret("-");
-            }
-
-            // 打印
-            System.out.println(analyseResult.toString());
-            analyseResultMap.put(changedInfo[0], analyseResult);
         }
 
         return analyseResultMap;

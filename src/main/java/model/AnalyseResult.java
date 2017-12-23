@@ -1,17 +1,18 @@
 package main.java.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- * Analyse entity. @author MyEclipse Persistence Tools
- */
 @Entity
-@Table(name = "analyse")
+@Table(name = "analyse_result")
 
 public class AnalyseResult implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private String fileName;
 
     /**
      * 异常在完整DNA片段上的真实位置
@@ -62,7 +63,17 @@ public class AnalyseResult implements java.io.Serializable {
                 ", changedSecret: '" + changedSecret + '\'' +
                 '}';
     }
+    @Id
+    @Column(name = "file_name", nullable = false)
+    public String getFileName() {
+        return this.fileName;
+    }
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    @Column(name = "real_position", nullable = false)
     public int getRealPosition() {
         return realPosition;
     }
@@ -71,6 +82,7 @@ public class AnalyseResult implements java.io.Serializable {
         this.realPosition = realPosition;
     }
 
+    @Column(name = "CDS_position", nullable = false)
     public int getCDSPosition() {
         return CDSPosition;
     }
@@ -79,6 +91,7 @@ public class AnalyseResult implements java.io.Serializable {
         this.CDSPosition = CDSPosition;
     }
 
+    @Column(name = "area", nullable = false)
     public String getArea() {
         return area;
     }
@@ -87,6 +100,7 @@ public class AnalyseResult implements java.io.Serializable {
         this.area = area;
     }
 
+    @Column(name = "changed_info", nullable = false)
     public String getChangedInfo() {
         return changedInfo;
     }
@@ -95,6 +109,7 @@ public class AnalyseResult implements java.io.Serializable {
         this.changedInfo = changedInfo;
     }
 
+    @Column(name = "changed_secret", nullable = false)
     public String getChangedSecret() {
         return changedSecret;
     }

@@ -1,24 +1,31 @@
 package main.java.dao;
 
 import main.java.model.Analyse;
+import main.java.model.AnalyseResult;
 import main.java.model.Secret;
 
 public interface AnalyseDao {
 
     /**
-     * ±£´æ·ÖÎö½á¹û
+     * ä¿å­˜è¯†åˆ«ç»“æœ
      * @param analyse
      */
     void saveAnalyseRes(Analyse analyse);
 
     /**
-     * ¸üĞÂ·ÖÎö½á¹û
+     * ä¿å­˜åˆ†æç»“æœ
+     * @param analyseResult
+     */
+    void saveAnalyseResultRes(AnalyseResult analyseResult);
+
+    /**
+     * æ›´æ–°åˆ†æç»“æœ
      * @param analyse
      */
     void updateAnalyseRes(Analyse analyse);
 
     /**
-     * ¸ù¾İÎÄ¼şÃû²éÑ¯·ÖÎö½á¹û
+     * æ ¹æ®æ–‡ä»¶åæŸ¥è¯¢åˆ†æç»“æœ
      * @param name
      * @return
      */

@@ -2,6 +2,7 @@ package main.java.daoImpl;
 
 import main.java.dao.AnalyseDao;
 import main.java.model.Analyse;
+import main.java.model.AnalyseResult;
 import main.java.model.Secret;
 import main.java.util.HibernateSessionFactory;
 import org.hibernate.Session;
@@ -42,6 +43,14 @@ public class AnalyseDaoImpl implements AnalyseDao {
         tx.commit();
         session.close();
         return secret;
+    }
+
+    public void saveAnalyseResultRes(AnalyseResult analyseResult) {
+        Session session = HibernateSessionFactory.getSession();
+        Transaction tx = session.beginTransaction();
+        session.saveOrUpdate(analyseResult);
+        tx.commit();
+        session.close();
     }
 
 }
