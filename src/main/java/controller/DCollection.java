@@ -56,6 +56,8 @@ public class DCollection {
             tv2 = Double.valueOf(request.getParameter("tv2"));
         }
 
+        start = 35;
+
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile mFile = multipartRequest.getFile("file");
         int fileSize = (int) mFile.getSize();

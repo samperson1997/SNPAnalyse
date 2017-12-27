@@ -113,6 +113,10 @@ public class DefectRecognition implements DefectRecognitionService {
         //匹配成功
         int gg = sindex + gs.length();
         System.out.println("在全长中的位置：" + gg);
+        System.out.println("开始处碱基：" + standardDna.charAt(gg));
+        System.out.println("开始前一个碱基：" + standardDna.charAt(gg - 1));
+        System.out.println("开始后一个碱基：" + standardDna.charAt(gg + 1));
+
         String cf = "";
         for (int i = 0; i < 20; i++) {
             String ck_s = String.valueOf(standardDna.charAt(gg + i));
@@ -232,12 +236,12 @@ public class DefectRecognition implements DefectRecognitionService {
         String[] data10 = dataMap.get("DATA 10").split(";");
         String[] data11 = dataMap.get("DATA 11").split(";");
         String[] data12 = dataMap.get("DATA 12").split(";");
-        System.out.println(dataMap.get("PBAS 2"));
-        System.out.println(dataMap.get("PLOC 2"));
-        System.out.println(dataMap.get("DATA 9"));
-        System.out.println(dataMap.get("DATA 10"));
-        System.out.println(dataMap.get("DATA 11"));
-        System.out.println(dataMap.get("DATA 12"));
+//        System.out.println(dataMap.get("PBAS 2"));
+//        System.out.println(dataMap.get("PLOC 2"));
+//        System.out.println(dataMap.get("DATA 9"));
+//        System.out.println(dataMap.get("DATA 10"));
+//        System.out.println(dataMap.get("DATA 11"));
+//        System.out.println(dataMap.get("DATA 12"));
 
         //正常的DNA序列
         String N_DNA = "";
@@ -251,7 +255,7 @@ public class DefectRecognition implements DefectRecognitionService {
         ArrayList<Integer> confirmedDoublePeak = new ArrayList<Integer>(); //确认双峰异常 原变量名为：yc
         ArrayList<Integer> suspectedDoublePeak = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
         int round = data9.length / location.length / 2;
-        System.out.println("round: " + round);
+//        System.out.println("round: " + round);
 
         Map<String, String> channelMap = new HashMap<String, String>();
 //        int s = start;
