@@ -48,7 +48,7 @@ public class AnalyseDaoImpl implements AnalyseDao {
     public void saveAnalyseResultRes(AnalyseResult analyseResult) {
         Session session = HibernateSessionFactory.getSession();
         Transaction tx = session.beginTransaction();
-        session.saveOrUpdate(analyseResult);
+        session.save(analyseResult);
         tx.commit();
         session.close();
     }

@@ -61,9 +61,6 @@ public class DefectAnalyse implements DefectAnalyseService {
         List<String> changedList = new ArrayList<>();
 
         //TODO 目前只针对LPL, 后面需要首先判断是什么类型的基因, 再找位置
-        String n_DNA = dataMap.get("N_DNA");
-        int firstPosition = LPL.indexOf(n_DNA);
-
         for (int i = 0; i < dataMap.get("sf_info").split(";").length; i++) {
             changedList.add(dataMap.get("sf_info").split(";")[i]);
             String[] changedInfo = changedList.get(i).split(":");
@@ -149,7 +146,7 @@ public class DefectAnalyse implements DefectAnalyseService {
                     }
 
                     // 找密码子对应的氨基酸
-                    if(isWrongResult){
+                    if (isWrongResult) {
                         analyseResult.setChangedSecret("wrong analyse result");
                     } else {
                         if (analyseDao.getSecret(U_secret) == null) {
@@ -239,7 +236,10 @@ public class DefectAnalyse implements DefectAnalyseService {
         //匹配在序列中的位置
         int sindex = standardDna.indexOf(gs);
 
-        //匹配成功
-        return sindex + gs.length() - 1;
+        if (sindex == -1) { //匹配失败
+            return -1;
+        } else { //匹配成功
+            return sindex + gs.length() - 1;
+        }
     }
 }
