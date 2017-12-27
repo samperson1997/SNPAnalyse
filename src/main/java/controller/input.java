@@ -3,6 +3,9 @@ package main.java.controller;
 import main.java.dao.AnalyseDao;
 import main.java.daoImpl.AnalyseDaoImpl;
 import main.java.model.Analyse;
+import main.java.model.AnalyseResult;
+import main.java.service.DefectAnalyseService;
+import main.java.serviceImpl.DefectAnalyse;
 import main.java.serviceImpl.DefectRecognition;
 
 import java.io.File;
