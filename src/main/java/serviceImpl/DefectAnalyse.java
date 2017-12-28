@@ -25,20 +25,6 @@ public class DefectAnalyse implements DefectAnalyseService {
     private final String LPL = geneDao.searchGeneByType("LPL").getSort();
     private final String LPL_CDS = geneDao.searchGeneByType("LPL").getCds();
 
-    private int[] CDS_start = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    private int[] CDS_end = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    private String CDS1 = "ATGGAGAGCAAAGCCCTGCTCGTGCTGACTCTGGCCGTGTGGCTCCAGAGTCTGACCGCCTCCCGCGGAGGGGTGGCCGCCGCCGACC";
-    private String CDS2 = "AAAGAAGAGATTTTATCGACATCGAAAGTAAATTTGCCCTAAGGACCCCTGAAGACACAGCTGAGGACACTTGCCACCTCATTCCCGGAGTAGCAGAGTCCGTGGCTACCTGTCATTTCAATCACAGCAGCAAAACCTTCATGGTGATCCATGGCTGGACGGTAA";
-    private String CDS3 = "CAGGAATGTATGAGAGTTGGGTGCCAAAACTTGTGGCCGCCCTGTACAAGAGAGAACCAGACTCCAATGTCATTGTGGTGGACTGGCTGTCACGGGCTCAGGAGCATTACCCAGTGTCCGCGGGCTACACCAAACTGGTGGGACAGGATGTGGCCCGGTTTATCAACTGGATGGAGG";
-    private String CDS4 = "AGGAGTTTAACTACCCTCTGGACAATGTCCATCTCTTGGGATACAGCCTTGGAGCCCATGCTGCTGGCATTGCAGGAAGTCTGACCAATAAGAAAGTCAACAGAATTACTGG";
-    private String CDS5 = "CCTCGATCCAGCTGGACCTAACTTTGAGTATGCAGAAGCCCCGAGTCGTCTTTCTCCTGATGATGCAGATTTTGTAGACGTCTTACACACATTCACCAGAGGGTCCCCTGGTCGAAGCATTGGAATCCAGAAACCAGTTGGGCATGTTGACATTTACCCGAATGGAGGTACTTTTCAGCCAGGATGTAACATTGGAGAAGCTATCCGCGTGATTGCAGAGAGAGGACTTGGAG";
-    private String CDS6 = "ATGTGGACCAGCTAGTGAAGTGCTCCCACGAGCGCTCCATTCATCTCTTCATCGACTCTCTGTTGAATGAAGAAAATCCAAGTAAGGCCTACAGGTGCAGTTCCAAGGAAGCCTTTGAGAAAGGGCTCTGCTTGAGTTGTAGAAAGAACCGCTGCAACAATCTGGGCTATGAGATCAATAAAGTCAGAGCCAAAAGAAGCAGCAAAATGTACCTGAAGACTCGTTCTCAGATGCCCTACAAAG";
-    private String CDS7 = "TCTTCCATTACCAAGTAAAGATTCATTTTTCTGGGACTGAGAGTGAAACCCATACCAATCAGGCCTTTGAGATTTCTCTGTATGGCACCGTGGCCGAGAGTGAGAACATCCCATTCACTCTG";
-    private String CDS8 = "CCTGAAGTTTCCACAAATAAGACCTACTCCTTCCTAATTTACACAGAGGTAGATATTGGAGAACTACTCATGTTGAAGCTCAAATGGAAGAGTGATTCATACTTTAGCTGGTCAGACTGGTGGAGCAGTCCCGGCTTCGCCATTCAGAAGATCAGAGTAAAAGCAGGAGAGACTCAGAAAAAG";
-    private String CDS9 = "GTGATCTTCTGTTCTAGGGAGAAAGTGTCTCATTTGCAGAAAGGAAAGGCACCTGCGGTATTTGTGAAATGCCATGACAAGTCTCTGAATAAGAAGTCAGGCTG";
-
-    private String[] CDSs = {CDS1, CDS2, CDS3, CDS4, CDS5, CDS6, CDS7, CDS8, CDS9};
 
     public DefectAnalyse(String path, int start, int end, double tv1, double tv2) {
         DefectRecognition defectRecognition = new DefectRecognition(path);
@@ -49,10 +35,6 @@ public class DefectAnalyse implements DefectAnalyseService {
 //        stdCDS = stdDna.getCds();
         CDS = new ArrayList<>();
 
-        for (int i = 0; i < CDSs.length; i++) {
-            CDS_start[i] = LPL.indexOf(CDSs[i]);
-            CDS_end[i] = LPL.indexOf(CDSs[i]) + CDSs[i].length() - 1;
-        }
     }
 
     @Override
@@ -80,17 +62,18 @@ public class DefectAnalyse implements DefectAnalyseService {
                  */
                 int CDSPosition = 0;
                 String area = "inner";
-                if (isCDS(realPosition)) {
-                    area = "outer";
-                    for (int j = 0; j < CDSs.length; j++) {
-                        if (CDS_end[j] < realPosition) {
-                            CDSPosition += (CDS_end[j] - CDS_start[j]);
-                        } else {
-                            CDSPosition += (realPosition - CDS_start[j]);
-                            break;
+                char gene[]=LPL.toCharArray();
+                char cds[]=LPL_CDS.toCharArray();
+                for(int k=0;k<=realPosition;k++){
+                    if(cds[CDSPosition]==gene[k]){
+                        CDSPosition++;
+                        if(k==realPosition){
+                            area="outer";
                         }
                     }
                 }
+                CDSPosition--;
+
                 analyseResult.setCDSPosition(CDSPosition);
 
                 /**
@@ -114,34 +97,34 @@ public class DefectAnalyse implements DefectAnalyseService {
 
                     boolean isWrongResult = false;
                     // 余数为0，向前拼接两位碱基构成密码子
-                    if (CDSPosition % 3 == 0) {
+                    if (CDSPosition % 3 == 2) {
                         if (CDSPosition < 2) {
                             isWrongResult = true;
                         } else {
                             N_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition + 1);
                             U_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition) + changedInformation.substring(3);
-                            System.out.println("CDSPosition % 3 == 0");
+                            //System.out.println("CDSPosition % 3 == 0");
                         }
                     }
                     // 余数为1，向后拼接两位碱基构成密码子
-                    else if (CDSPosition % 3 == 1) {
+                    else if (CDSPosition % 3 == 0) {
                         if (CDSPosition < 0) {
                             isWrongResult = true;
                         } else {
                             N_secret = LPL_CDS.substring(CDSPosition, CDSPosition + 3);
-                            U_secret = changedInformation.substring(3) + LPL_CDS.substring(CDSPosition, CDSPosition + 2);
-                            System.out.println("CDSPosition % 3 == 1");
+                            U_secret = changedInformation.substring(3) + LPL_CDS.substring(CDSPosition+1, CDSPosition + 3);
+                            //System.out.println("CDSPosition % 3 == 1");
                         }
                     }
                     // 余数为2，取一前一后两位碱基构成密码子
-                    else if (CDSPosition % 3 == 2) {
+                    else if (CDSPosition % 3 == 1) {
                         if (CDSPosition < 1) {
                             isWrongResult = true;
                         } else {
                             N_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition + 2);
                             U_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition) + changedInformation.substring(3)
                                     + LPL_CDS.substring(CDSPosition + 1, CDSPosition + 2);
-                            System.out.println("CDSPosition % 3 == 2");
+                            //System.out.println("CDSPosition % 3 == 2");
                         }
                     }
 
@@ -169,56 +152,6 @@ public class DefectAnalyse implements DefectAnalyseService {
         return analyseResultMap;
     }
 
-
-    /**
-     * @param position 基因真实位置
-     * @return 基因是否在CDS序列上
-     */
-    private boolean isCDS(int position) {
-        boolean res = false;
-        for (int i = 0; i < CDSs.length; i++) {
-            if (CDS_start[i] <= position && position <= CDS_end[i]) {
-                res = true;
-                break;
-            }
-        }
-
-        return res;
-
-    }
-
-    /**
-     * 找出CDS片段
-     */
-    private void getCDS() {
-        char gene[] = stdGene.toCharArray();
-        char cds[] = stdCDS.toCharArray();
-        String cdsFragment = "";
-        int gStart = 0;
-        int cStart = 0;
-        int length = 0;
-        int geneCursor = 0;
-        for (int i = 0; i < cds.length; ) {
-            for (int j = geneCursor; i < gene.length; j++) {
-                String candidate = "";
-                int increment = 0;
-                while (cds[i + increment] == gene[j + increment]) {
-                    candidate = candidate + gene[j + increment];
-                    increment++;
-                }
-                if (candidate.length() > cdsFragment.length()) {
-                    cdsFragment = candidate;
-                    length = candidate.length();
-                    gStart = j + length;
-                    cStart = i + length;
-                }
-            }
-            CDS.add(cdsFragment);
-            cdsFragment = "";
-            geneCursor = gStart;
-            i = cStart;
-        }
-    }
 
     /**
      * 获得在全长中的位置
