@@ -62,19 +62,30 @@ public class DefectAnalyse implements DefectAnalyseService {
                  */
                 int CDSPosition = 0;
                 String area = "inner";
+                int count=0;
                 char gene[]=LPL.toCharArray();
                 char cds[]=LPL_CDS.toCharArray();
                 for(int k=0;k<=realPosition;k++){
-                    if(cds[CDSPosition]==gene[k]){
-                        CDSPosition++;
+                    if(cds[CDSPosition+count]==gene[k]){
+                        count++;
                         if(k==realPosition){
                             area="outer";
+                            if(count>20){
+                                CDSPosition+=(count-1);
+                            }
                         }
                     }
+                    else{
+                        if(count>20){
+                            CDSPosition+=(count-1);
+                        }
+                        count=0;
+                    }
                 }
-                CDSPosition--;
+
 
                 analyseResult.setCDSPosition(CDSPosition);
+                analyseResult.setSecretPosition(CDSPosition/3+1);
 
                 /**
                  * 异常所在DNA片段区域
