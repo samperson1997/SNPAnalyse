@@ -58,30 +58,33 @@ public class DefectAnalyse implements DefectAnalyseService {
 
                 /**
                  * 异常在完整CDS片段上的真实位置
-                 * 先判断在CDS上，再计算异常在完整CDS片段上的真实位置
                  */
                 int CDSPosition = 0;
                 String area = "inner";
                 int count=0;
                 char gene[]=LPL.toCharArray();
                 char cds[]=LPL_CDS.toCharArray();
+                String cd="";
                 for(int k=0;k<=realPosition;k++){
                     if(cds[CDSPosition+count]==gene[k]){
                         count++;
+                        cd+=gene[k];
                         if(k==realPosition){
                             area="outer";
-                            if(count>20){
-                                CDSPosition+=(count-1);
-                            }
+                            CDSPosition+=count;
+                            System.out.println(cd);
                         }
                     }
                     else{
                         if(count>20){
-                            CDSPosition+=(count-1);
+                            CDSPosition+=count;
+                            System.out.println(cd);
                         }
                         count=0;
+                        cd="";
                     }
                 }
+                System.out.println(area+" "+CDSPosition);
 
 
                 analyseResult.setCDSPosition(CDSPosition);
