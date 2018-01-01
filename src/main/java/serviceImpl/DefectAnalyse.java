@@ -70,12 +70,31 @@ public class DefectAnalyse implements DefectAnalyseService {
                         count++;
                         cd+=gene[k];
                         if(k==realPosition){
-                            area="outer";
-                            CDSPosition+=count;
-                            System.out.println(cd);
+                            int u=0;
+                            while(count<=20){
+                                if(cds[CDSPosition+count]==gene[k+u]){
+                                    count++;
+                                    u++;
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                            if(count<20){
+                                CDSPosition=0;
+                            }
+                            else{
+                                area="outer";
+                                CDSPosition+=count;
+                                System.out.println(cd);
+                            }
+
                         }
                     }
                     else{
+                        if(k==realPosition){
+                            CDSPosition=0;
+                        }
                         if(count>20){
                             CDSPosition+=count;
                             System.out.println(cd);
