@@ -15,6 +15,11 @@ public class AnalyseResult implements java.io.Serializable {
     private String fileName;
 
     /**
+     * 异常在片段上的位置
+     */
+    private int position;
+
+    /**
      * 异常在完整DNA片段上的真实位置
      */
     private int realPosition;
@@ -51,10 +56,11 @@ public class AnalyseResult implements java.io.Serializable {
 
     }
 
-    public AnalyseResult(int realPosition, int CDSPosition,int secretPosition, String area, String changedInfo, String changedSecret) {
+    public AnalyseResult(int position, int realPosition, int CDSPosition, int secretPosition, String area, String changedInfo, String changedSecret) {
+        this.position = position;
         this.realPosition = realPosition;
         this.CDSPosition = CDSPosition;
-        this.secretPosition=secretPosition;
+        this.secretPosition = secretPosition;
         this.area = area;
         this.changedInfo = changedInfo;
         this.changedSecret = changedSecret;
@@ -63,14 +69,16 @@ public class AnalyseResult implements java.io.Serializable {
     @Override
     public String toString() {
         return "AnalyseResult{" +
-                "realPosition: " + realPosition +
+                "position: " + position +
+                ", realPosition: " + realPosition +
                 ", CDSPosition: " + CDSPosition +
                 ", area: '" + area + '\'' +
                 ", changedInfo: '" + changedInfo + '\'' +
                 ", changedSecret: '" + changedSecret + '\'' +
-                ", SecretPosition: '" + secretPosition + '\'' +
+                ", secretPosition: '" + secretPosition + '\'' +
                 '}';
     }
+
     @Id
     @Column(name = "file_name", nullable = false)
     public String getFileName() {
@@ -80,6 +88,16 @@ public class AnalyseResult implements java.io.Serializable {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    @Column(name = "position", nullable = false)
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
 
     @Column(name = "real_position", nullable = false)
     public int getRealPosition() {

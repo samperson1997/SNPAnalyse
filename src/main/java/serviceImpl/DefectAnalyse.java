@@ -48,12 +48,17 @@ public class DefectAnalyse implements DefectAnalyseService {
             String[] changedInfo = changedList.get(i).split(":");
 
             AnalyseResult analyseResult = new AnalyseResult();
-            /**
-             * 异常在完整DNA片段上的真实位置
-             */
-            if (!changedInfo[0].equals("")) {
-                int realPosition = getLocations(Integer.parseInt(changedInfo[0]));
 
+            if (!changedInfo[0].equals("")) {
+                /**
+                 * 异常在片段上的位置
+                 */
+                analyseResult.setPosition(Integer.parseInt(changedInfo[0]));
+
+                /**
+                 * 异常在完整DNA片段上的真实位置
+                 */
+                int realPosition = getLocations(Integer.parseInt(changedInfo[0]));
                 analyseResult.setRealPosition(realPosition);
 
                 /**
@@ -61,53 +66,50 @@ public class DefectAnalyse implements DefectAnalyseService {
                  */
                 int CDSPosition = 0;
                 String area = "inner";
-                int count=0;
-                char gene[]=LPL.toCharArray();
-                char cds[]=LPL_CDS.toCharArray();
-                String cd="";
-                for(int k=0;k<=realPosition;k++){
-                    if(cds[CDSPosition+count]==gene[k]){
+                int count = 0;
+                char gene[] = LPL.toCharArray();
+                char cds[] = LPL_CDS.toCharArray();
+                String cd = "";
+                for (int k = 0; k <= realPosition; k++) {
+                    if (cds[CDSPosition + count] == gene[k]) {
                         count++;
-                        cd+=gene[k];
-                        if(k==realPosition){
-                            int u=0;
-                            while(count<=20){
-                                if(cds[CDSPosition+count]==gene[k+u]){
+                        cd += gene[k];
+                        if (k == realPosition) {
+                            int u = 0;
+                            while (count <= 20) {
+                                if (cds[CDSPosition + count] == gene[k + u]) {
                                     count++;
                                     u++;
-                                }
-                                else{
+                                } else {
                                     break;
                                 }
                             }
-                            if(count<20){
-                                CDSPosition=0;
-                            }
-                            else{
-                                area="outer";
-                                CDSPosition+=count;
+                            if (count < 20) {
+                                CDSPosition = 0;
+                            } else {
+                                area = "outer";
+                                CDSPosition += count;
                                 System.out.println(cd);
                             }
 
                         }
-                    }
-                    else{
-                        if(k==realPosition){
-                            CDSPosition=0;
+                    } else {
+                        if (k == realPosition) {
+                            CDSPosition = 0;
                         }
-                        if(count>20){
-                            CDSPosition+=count;
+                        if (count > 20) {
+                            CDSPosition += count;
                             System.out.println(cd);
                         }
-                        count=0;
-                        cd="";
+                        count = 0;
+                        cd = "";
                     }
                 }
-                System.out.println(area+" "+CDSPosition);
+                System.out.println(area + " " + CDSPosition);
 
 
                 analyseResult.setCDSPosition(CDSPosition);
-                analyseResult.setSecretPosition(CDSPosition/3+1);
+                analyseResult.setSecretPosition(CDSPosition / 3 + 1);
 
                 /**
                  * 异常所在DNA片段区域
@@ -145,7 +147,7 @@ public class DefectAnalyse implements DefectAnalyseService {
                             isWrongResult = true;
                         } else {
                             N_secret = LPL_CDS.substring(CDSPosition, CDSPosition + 3);
-                            U_secret = changedInformation.substring(3) + LPL_CDS.substring(CDSPosition+1, CDSPosition + 3);
+                            U_secret = changedInformation.substring(3) + LPL_CDS.substring(CDSPosition + 1, CDSPosition + 3);
                             //System.out.println("CDSPosition % 3 == 1");
                         }
                     }
