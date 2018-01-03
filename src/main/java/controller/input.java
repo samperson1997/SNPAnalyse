@@ -91,6 +91,10 @@ public class input {
 
             AnalyseDao analyseDao = new AnalyseDaoImpl();
             analyseDao.saveAnalyseResultRes(analyseResult);
+
+//            System.out.println("========================");
+//            System.out.println("real position: " + analyseResult.getRealPosition());
+//            System.out.println("========================");
         }
     }
 }
