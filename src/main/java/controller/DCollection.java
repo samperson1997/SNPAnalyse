@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import main.java.model.Analyse;
 import main.java.service.DefectAnalyseService;
+import main.java.service.SequenceFileCheck;
 import main.java.serviceImpl.DefectAnalyse;
 import main.java.serviceImpl.DefectRecognition;
+import main.java.serviceImpl.SequenceFileCheckImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,6 +81,13 @@ public class DCollection {
             // TODO 这里开始异常的分析
 //            DefectAnalyseService defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
 //            defectAnalyse.getAnalyseResult();
+
+
+            SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(path);
+            if (sequenceFileCheck.checkGeneFileIsNormal()) {
+
+            }
+
 
             dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
             //
