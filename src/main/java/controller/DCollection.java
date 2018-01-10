@@ -83,7 +83,7 @@ public class DCollection {
 //            defectAnalyse.getAnalyseResult();
 
 
-            SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(path);
+            SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(path, start, end);
             if (sequenceFileCheck.checkGeneFileIsNormal()) {
 
             }

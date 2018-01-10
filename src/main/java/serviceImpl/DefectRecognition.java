@@ -201,7 +201,7 @@ public class DefectRecognition implements DefectRecognitionService {
             map.put(n, Integer.valueOf(data[n]));
         }
 
-        Map<Integer, Integer> sortedMap = sortMap(map);
+        Map<Integer, Integer> sortedMap = util.sortMap(map);
 
         Iterator<Map.Entry<Integer, Integer>> it = sortedMap.entrySet().iterator();
 
@@ -293,19 +293,19 @@ public class DefectRecognition implements DefectRecognitionService {
 //            System.out.println("r2: " + r2);
 //            System.out.println("===================");
 
-            if (n1 > 0 && n2 != 0 ) {
+            if (n1 > 0 && n2 != 0) {
 
 //                if (n1 >= preN1 && n2 >= preN2 && n1 >= postN1 && n2 >= postN2) {
-                    if (n2 / n1 > tv1) {
-                        confirmedDoublePeak.add(i);
-                        DNA[i] = e2.getKey();
-                        doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
-                        r1 += (i + 1 + ";");
-                    } else if (n2 / n1 < tv1 && n2 / n1 > tv2) {
-                        suspectedDoublePeak.add(i);
-                        doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
-                        r2 += (i + 1 + ";");
-                    }
+                if (n2 / n1 > tv1) {
+                    confirmedDoublePeak.add(i);
+                    DNA[i] = e2.getKey();
+                    doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
+                    r1 += (i + 1 + ";");
+                } else if (n2 / n1 < tv1 && n2 / n1 > tv2) {
+                    suspectedDoublePeak.add(i);
+                    doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
+                    r2 += (i + 1 + ";");
+                }
 //                }
             }
 
@@ -353,7 +353,7 @@ public class DefectRecognition implements DefectRecognitionService {
 //            System.out.println(key);
 //        }
 
-        Map<String, Integer> sortedMap = sortMap(data);
+        Map<String, Integer> sortedMap = util.sortMap(data);
 //        System.out.println("postMapSize: " + sortedMap.size());
 //        System.out.println("=====================");
 //        for (String key: sortedMap.keySet()) {
@@ -371,29 +371,6 @@ public class DefectRecognition implements DefectRecognitionService {
         }
 
         return null;
-    }
-
-    private <T> Map<T, Integer> sortMap(Map<T, Integer> oldMap) {
-        ArrayList<Map.Entry<T, Integer>> list = new ArrayList<Map.Entry<T, Integer>>(oldMap.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<T, Integer>>() {
-
-            @Override
-            public int compare(Map.Entry<T, Integer> arg0, Map.Entry<T, Integer> arg1) {
-                return Math.abs(arg1.getValue()) - Math.abs(arg0.getValue());
-            }
-        });
-        Map<T, Integer> newMap = new LinkedHashMap<T, Integer>();
-//        System.out.println("=====================");
-
-        for (int i = 0; i < list.size(); i++) {
-//            if (list.size() < 5) {
-//                System.out.println(list.get(i).getValue());
-//            }
-            newMap.put(list.get(i).getKey(), list.get(i).getValue());
-        }
-//        System.out.println("=====================");
-
-        return newMap;
     }
 
 }
