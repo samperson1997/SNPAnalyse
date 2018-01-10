@@ -15,6 +15,11 @@ public class AnalyseResult implements java.io.Serializable {
     private String fileName;
 
     /**
+     * 异常在片段上的位置
+     */
+    private int position;
+
+    /**
      * 异常在完整DNA片段上的真实位置
      */
     private int realPosition;
@@ -25,6 +30,11 @@ public class AnalyseResult implements java.io.Serializable {
     private int CDSPosition;
 
     /**
+     * 变异氨基酸的位置
+     */
+    private int secretPosition;
+
+    /**
      * 异常所在DNA片段区域
      */
     private String area;
@@ -33,6 +43,7 @@ public class AnalyseResult implements java.io.Serializable {
      * 异常变化信息
      */
     private String changedInfo;
+
 
     /**
      * 氨基酸变化信息
@@ -45,9 +56,11 @@ public class AnalyseResult implements java.io.Serializable {
 
     }
 
-    public AnalyseResult(int realPosition, int CDSPosition, String area, String changedInfo, String changedSecret) {
+    public AnalyseResult(int position, int realPosition, int CDSPosition, int secretPosition, String area, String changedInfo, String changedSecret) {
+        this.position = position;
         this.realPosition = realPosition;
         this.CDSPosition = CDSPosition;
+        this.secretPosition = secretPosition;
         this.area = area;
         this.changedInfo = changedInfo;
         this.changedSecret = changedSecret;
@@ -56,13 +69,16 @@ public class AnalyseResult implements java.io.Serializable {
     @Override
     public String toString() {
         return "AnalyseResult{" +
-                "realPosition: " + realPosition +
+                "position: " + position +
+                ", realPosition: " + realPosition +
                 ", CDSPosition: " + CDSPosition +
                 ", area: '" + area + '\'' +
                 ", changedInfo: '" + changedInfo + '\'' +
                 ", changedSecret: '" + changedSecret + '\'' +
+                ", secretPosition: '" + secretPosition + '\'' +
                 '}';
     }
+
     @Id
     @Column(name = "file_name", nullable = false)
     public String getFileName() {
@@ -73,6 +89,16 @@ public class AnalyseResult implements java.io.Serializable {
         this.fileName = fileName;
     }
 
+    @Column(name = "position", nullable = false)
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+
     @Column(name = "real_position", nullable = false)
     public int getRealPosition() {
         return realPosition;
@@ -80,6 +106,15 @@ public class AnalyseResult implements java.io.Serializable {
 
     public void setRealPosition(int realPosition) {
         this.realPosition = realPosition;
+    }
+
+    @Column(name = "secret_position", nullable = false)
+    public int getSecretPosition() {
+        return secretPosition;
+    }
+
+    public void setSecretPosition(int secretPosition) {
+        this.secretPosition = secretPosition;
     }
 
     @Column(name = "CDS_position", nullable = false)
