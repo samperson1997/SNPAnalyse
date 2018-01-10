@@ -88,7 +88,7 @@ public class DCollection {
 
             SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(path, start, end);
             if (!sequenceFileCheck.checkGeneFileIsNormal()) {
-                System.out.println("！！！！！！！！！！！！！sequence file error！！！！！！！！！！！！！！！！！");
+                System.out.println("sequence file error!!!!");
                 AnalyseResult analyseResult = new AnalyseResult(path.split("/")[path.split("/").length - 1]);
                 AnalyseDao analyseDao = new AnalyseDaoImpl();
                 analyseDao.saveAnalyseResultRes(analyseResult);
@@ -97,13 +97,13 @@ public class DCollection {
 
 
             dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
-            //
-//            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
-//                String lack = defectRecognition.getMissGeneSort(dm);
-//                System.out.println("-----lack-------: " + lack);
-//                dm.put("lack_gene", lack);
-//            }
-            //
+
+            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
+                String lack = defectRecognition.getMissGeneSort(dm);
+                System.out.println("-----lack-------: " + lack);
+                dm.put("lack_gene", lack);
+            }
+
             jsonObject = JSONObject.fromObject(dm);
 
             Analyse analyse = new Analyse();
