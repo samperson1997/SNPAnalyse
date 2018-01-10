@@ -7,7 +7,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import main.java.dao.AnalyseDao;
+import main.java.daoImpl.AnalyseDaoImpl;
 import main.java.model.Analyse;
+import main.java.model.AnalyseResult;
 import main.java.service.DefectAnalyseService;
 import main.java.service.SequenceFileCheck;
 import main.java.serviceImpl.DefectAnalyse;
@@ -86,6 +89,10 @@ public class DCollection {
             SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(path, start, end);
             if (!sequenceFileCheck.checkGeneFileIsNormal()) {
                 System.out.println("！！！！！！！！！！！！！sequence file error！！！！！！！！！！！！！！！！！");
+                AnalyseResult analyseResult = new AnalyseResult(path.split("/")[path.split("/").length - 1]);
+                AnalyseDao analyseDao = new AnalyseDaoImpl();
+                analyseDao.saveAnalyseResultRes(analyseResult);
+                return "";
             }
 
 
