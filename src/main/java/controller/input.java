@@ -41,8 +41,8 @@ public class input {
     private static void startTest(File mFile) throws IOException {
 
         if (mFile.getAbsolutePath().endsWith(".ab1")) {
-//            defectRecognitionTest(mFile);
-            defectAnalyseTest(mFile);
+            defectRecognitionTest(mFile);
+//            defectAnalyseTest(mFile);
         }
     }
 
@@ -78,7 +78,7 @@ public class input {
     }
 
     private static void defectAnalyseTest(File mFile) {
-        int start = 20;
+        int start = 35;
         int end = 10;
         double tv1 = 0.6;  //确认双峰阈值
         double tv2 = 0.5;  //疑似双峰阈值
