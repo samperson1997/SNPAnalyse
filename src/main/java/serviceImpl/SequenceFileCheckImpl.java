@@ -34,18 +34,20 @@ public class SequenceFileCheckImpl implements SequenceFileCheck {
 
         int abnormalRangeNums = 0;
 
+        System.out.println("peakNums：");
         for (int position = start; position < location.length - end; position++) {
             int peakNums = getPeakNumsOfRange(round, position);
+            System.out.println("position: " + position + "; peakNums: " + peakNums + " ");
             if (peakNums >= 3) {
                 return false;
             }
             if (peakNums > 2) {
                 abnormalRangeNums++;
             }
-
         }
+        System.out.println();
 
-        //暂且认为如果同一段周期内由多个峰值的个数大于20段，则为测序失败
+        //暂且认为如果同一段周期内有多个峰值的个数大于20段，则为测序失败
         if (abnormalRangeNums > 20) {
             return false;
         }
@@ -99,8 +101,9 @@ public class SequenceFileCheckImpl implements SequenceFileCheck {
             while (iterator.hasNext()) {
                 Map.Entry<Integer, Integer> entry = iterator.next();
                 int tk = entry.getKey();
+                int value = entry.getValue();
                 if (tk > roundStart && tk < roundEnd && map.get(tk) >= map.get(tk - 1) && map.get(tk) >= map.get(tk + 1)
-                        && tk - roundStart > 200 && tk - roundEnd > 200) {
+                        && value - map.get(roundStart) > 200 && value - map.get(roundEnd) > 200) {
                     peakNums++;
                 }
             }

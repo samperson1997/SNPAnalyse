@@ -84,18 +84,18 @@ public class DCollection {
 
 
             SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(path, start, end);
-            if (sequenceFileCheck.checkGeneFileIsNormal()) {
-
+            if (!sequenceFileCheck.checkGeneFileIsNormal()) {
+                System.out.println("！！！！！！！！！！！！！sequence file error！！！！！！！！！！！！！！！！！");
             }
 
 
             dm = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
             //
-            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
-                String lack = defectRecognition.getMissGeneSort(dm);
-                System.out.println("-----lack-------: " + lack);
-                dm.put("lack_gene", lack);
-            }
+//            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
+//                String lack = defectRecognition.getMissGeneSort(dm);
+//                System.out.println("-----lack-------: " + lack);
+//                dm.put("lack_gene", lack);
+//            }
             //
             jsonObject = JSONObject.fromObject(dm);
 
