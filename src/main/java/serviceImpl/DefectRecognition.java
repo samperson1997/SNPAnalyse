@@ -3,7 +3,6 @@ package main.java.serviceImpl;
 import main.java.daoImpl.GeneDaoImpl;
 import main.java.service.DefectRecognitionService;
 import main.java.util.Util;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 
 import java.util.*;
 
@@ -99,9 +98,9 @@ public class DefectRecognition implements DefectRecognitionService {
 
         //匹配标准DNA序列
 //        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
+        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
         standardDna = standardDna.toUpperCase();
-        System.out.println(standardDna);
+//        System.out.println(standardDna);
         //匹配在序列中的位置
         int sindex = standardDna.indexOf(gs);
         System.out.println("sindex：" + sindex);
@@ -113,13 +112,14 @@ public class DefectRecognition implements DefectRecognitionService {
         //匹配成功
         int gg = sindex + gs.length();
         System.out.println("在全长中的位置：" + gg);
-        System.out.println("开始处碱基：" + standardDna.charAt(gg));
-        System.out.println("开始前一个碱基：" + standardDna.charAt(gg - 1));
-        System.out.println("开始后一个碱基：" + standardDna.charAt(gg + 1));
 
         String cf = "";
+
+        String ckString = "";
         for (int i = 0; i < 20; i++) {
             String ck_s = String.valueOf(standardDna.charAt(gg + i));
+            ckString += ck_s;
+
             System.out.println("===============");
             System.out.println("start + i + 1: " + (start + i + 1));
             System.out.println("ck_s: " + ck_s);
@@ -145,6 +145,7 @@ public class DefectRecognition implements DefectRecognitionService {
 //            System.out.println("===============");
         }
         int eindex = standardDna.substring(gg).indexOf(cf);
+        System.out.println("正常的20位：" + ckString);
 //        int eindex = standardDna.indexOf(cf);
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("cf: " + cf);
@@ -157,66 +158,55 @@ public class DefectRecognition implements DefectRecognitionService {
         }
     }
 
-    /**
-     * 获得在全长中的位置
-     */
-    public void getLocations(int start) {
-        String la = dataMap.get("N_DNA");
-        System.out.println("-----------正常DNA序列----------: " + la);
-        String[] locations = la.split("");
-
-        String gs = "";
-
-        for (int h = start - 20; h < start; h++) {
-            gs += locations[h];
-        }
-
-        System.out.println("连续双峰起始处的前20位碱基序列 " + gs);
-
-        //匹配标准DNA序列
-//        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
-        standardDna = standardDna.toUpperCase();
-        System.out.println(standardDna);
-        //匹配在序列中的位置
-        int sindex = standardDna.indexOf(gs);
-        System.out.println("sindex：" + sindex);
-        //匹配失败
-        if (sindex == -1) {
-            //todo
-//            return "-1;-1";
-        }
-
-        //匹配成功
-        int gg = sindex + gs.length();
-        System.out.println("在全长中的位置：" + gg);
-    }
-
     private int getMaxOfRange(String[] data, String location, int round) {
         Map<Integer, Integer> map = new HashMap<Integer, Integer>();
         int half = round / 2 + 1;
         int start = Integer.valueOf(location) - half;
         int end = Integer.valueOf(location) + half;
+        int firstValue = 0;
+        int lastValue = 0;
+
         for (int n = start; n <= end; n++) {
             map.put(n, Integer.valueOf(data[n]));
+            if (n == start) {
+                firstValue = Integer.valueOf(data[n]);
+            }
+
+            if (n == end) {
+                lastValue = Integer.valueOf(data[n]);
+            }
+        }
+
+        if (firstValue == 0) {
+            firstValue = 1;
+        }
+        if (lastValue == 0) {
+            lastValue = 1;
         }
 
         Map<Integer, Integer> sortedMap = sortMap(map);
 
-        Iterator<Map.Entry<Integer, Integer>> it = sortedMap.entrySet().iterator();
+        //该值用于判断该范围最大值是否为峰值
+        double isPeak = 0.6;
 
+        Iterator<Map.Entry<Integer, Integer>> it = sortedMap.entrySet().iterator();
+//        System.out.println("==================");
         while (it.hasNext()) {
             Map.Entry<Integer, Integer> entry = it.next();
             int tk = entry.getKey();
+//            System.out.println(entry.getValue());
             if (tk > start && tk < end && map.get(tk) >= map.get(tk - 1) && map.get(tk) >= map.get(tk + 1)) {
-//                System.out.println("!=========================");
-//                System.out.println("location: " + location);
-//                System.out.println("cur: " + entry.getValue());
-//                System.out.println("!=========================");
-
-                return entry.getValue();
+                int curValue = entry.getValue();
+                if (curValue != 0) {
+                    if (firstValue / curValue < isPeak && lastValue / curValue < isPeak) {
+                        return entry.getValue();
+                    } else {
+                        return -Integer.valueOf(data[(start + end) / 2]);
+                    }
+                }
             }
         }
+//        System.out.println("==================");
 
         return -Integer.valueOf(data[(start + end) / 2]);
 
@@ -230,18 +220,11 @@ public class DefectRecognition implements DefectRecognitionService {
         String r1 = "";
         String r2 = "";
         String[] DNA = dataMap.get("PBAS 2").split("");
-//        System.out.println(DNA.toString());
         String[] location = dataMap.get("PLOC 2").split(";");
         String[] data9 = dataMap.get("DATA 9").split(";");
         String[] data10 = dataMap.get("DATA 10").split(";");
         String[] data11 = dataMap.get("DATA 11").split(";");
         String[] data12 = dataMap.get("DATA 12").split(";");
-//        System.out.println(dataMap.get("PBAS 2"));
-//        System.out.println(dataMap.get("PLOC 2"));
-//        System.out.println(dataMap.get("DATA 9"));
-//        System.out.println(dataMap.get("DATA 10"));
-//        System.out.println(dataMap.get("DATA 11"));
-//        System.out.println(dataMap.get("DATA 12"));
 
         //正常的DNA序列
         String N_DNA = "";
@@ -254,11 +237,10 @@ public class DefectRecognition implements DefectRecognitionService {
 
         ArrayList<Integer> confirmedDoublePeak = new ArrayList<Integer>(); //确认双峰异常 原变量名为：yc
         ArrayList<Integer> suspectedDoublePeak = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
+        ArrayList<Integer> sequencingError = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
         int round = data9.length / location.length / 2;
-//        System.out.println("round: " + round);
 
         Map<String, String> channelMap = new HashMap<String, String>();
-//        int s = start;
         channelMap.put("data9", "G");
         channelMap.put("data10", "A");
         channelMap.put("data11", "T");
@@ -279,12 +261,7 @@ public class DefectRecognition implements DefectRecognitionService {
 
             double n1 = e1.getValue();
             double n2 = e2.getValue();
-            double preN1 = preE1.getValue();
-            double preN2 = preE2.getValue();
-            double postN1 = postE1.getValue();
-            double postN2 = postE2.getValue();
 
-//
 //            System.out.println("===================");
 //            System.out.println("i: " + i);
 //            System.out.println("n1: " + n1);
@@ -293,44 +270,59 @@ public class DefectRecognition implements DefectRecognitionService {
 //            System.out.println("r2: " + r2);
 //            System.out.println("===================");
 
-            if (n1 > 0 && n2 != 0 ) {
+            //该值用于判断双峰是否由背景值过高造成
+            double tv3 = 0.2;
+//            boolean isSlope1 = false;
+//            boolean isSlope2 = false;
 
+            if (n1 > 0 && n2 > 0) {
 //                if (n1 >= preN1 && n2 >= preN2 && n1 >= postN1 && n2 >= postN2) {
-                    if (n2 / n1 > tv1) {
-                        confirmedDoublePeak.add(i);
-                        DNA[i] = e2.getKey();
-                        doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
-                        r1 += (i + 1 + ";");
-                    } else if (n2 / n1 < tv1 && n2 / n1 > tv2) {
-                        suspectedDoublePeak.add(i);
-                        doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
-                        r2 += (i + 1 + ";");
+//
+                if (n2 / n1 > tv2) {
+                    if (isSlope(e1, data9, data10, data11, data12, location, i) ||
+                            isSlope(e2, data9, data10, data11, data12, location, i)) {
+                        sequencingError.add(i);
+                        continue;
                     }
+                }
+                if (n2 / n1 > tv1) {
+                    confirmedDoublePeak.add(i);
+                    DNA[i] = e2.getKey();
+                    doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
+                    r1 += (i + 1 + ";");
+                } else if (n2 / n1 < tv1 && n2 / n1 > tv2) {
+                    suspectedDoublePeak.add(i);
+                    doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
+                    r2 += (i + 1 + ";");
+                }
 //                }
+            } else {
+                if (Math.abs(n2) / Math.abs(n1) > tv3) {
+                    sequencingError.add(i);
+                }
             }
-
         }
 
         String U_DNA = "";
-
 
         for (int n = 0; n < DNA.length; n++) {
             U_DNA += DNA[n];
         }
 
+        String sequencingErrorString = "";
+        for (int i = 0; i < sequencingError.size(); i++) {
+            sequencingErrorString += sequencingError.get(i) + 1 + ";";
+        }
 
-        r1 = util.deleteEnd(r1);
-        r2 = util.deleteEnd(r2);
-        doublePeakInfo = util.deleteEnd(doublePeakInfo);
-
-        dataMap.put("yc", r1);
-        dataMap.put("ys", r2);
+        //deleteEnd 删除以;连接的数字组成的字符串最后一个;
+        dataMap.put("yc", util.deleteEnd(r1));
+        dataMap.put("ys", util.deleteEnd(r2));
         dataMap.put("U_DNA", U_DNA);
         dataMap.put("N_DNA", N_DNA);
-        dataMap.put("sf_info", doublePeakInfo);
+        dataMap.put("sf_info", util.deleteEnd(doublePeakInfo));
+        dataMap.put("sequencingError", util.deleteEnd(sequencingErrorString));
+//        System.out.println(sequencingErrorString);
 
-//        System.out.println(r1);
-//        System.out.println(r2);
         return dataMap;
     }
 
@@ -394,6 +386,39 @@ public class DefectRecognition implements DefectRecognitionService {
 //        System.out.println("=====================");
 
         return newMap;
+    }
+
+    private boolean isSlope(Map.Entry<String, Integer> e, String[] data9, String[] data10, String[] data11, String[] data12, String[] location, int i) {
+        String[] data;
+        switch (e.getKey()) {
+            case "G":
+                data = data9;
+                break;
+            case "A":
+                data = data10;
+                break;
+            case "T":
+                data = data11;
+                break;
+            case "C":
+                data = data12;
+                break;
+            default:
+                data = new String[0];
+        }
+
+
+        if (data.length > i + 1) {
+            int preValue = Integer.parseInt(data[Integer.parseInt(location[i - 1])]);
+            int curValye = Integer.parseInt(data[Integer.parseInt(location[i])]);
+            int postValue = Integer.parseInt(data[Integer.parseInt(location[i + 1])]);
+
+            if (preValue < 0 || postValue < 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
