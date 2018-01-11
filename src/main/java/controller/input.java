@@ -5,8 +5,10 @@ import main.java.daoImpl.AnalyseDaoImpl;
 import main.java.model.Analyse;
 import main.java.model.AnalyseResult;
 import main.java.service.DefectAnalyseService;
+import main.java.service.SequenceFileCheck;
 import main.java.serviceImpl.DefectAnalyse;
 import main.java.serviceImpl.DefectRecognition;
+import main.java.serviceImpl.SequenceFileCheckImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,8 +43,8 @@ public class input {
     private static void startTest(File mFile) throws IOException {
 
         if (mFile.getAbsolutePath().endsWith(".ab1")) {
-            defectRecognitionTest(mFile);
-//            defectAnalyseTest(mFile);
+//            defectRecognitionTest(mFile);
+            defectAnalyseTest(mFile);
         }
     }
 
@@ -82,19 +84,25 @@ public class input {
         int end = 10;
         double tv1 = 0.6;  //确认双峰阈值
         double tv2 = 0.5;  //疑似双峰阈值
-        DefectAnalyseService defectAnalyse = new DefectAnalyse(mFile.getAbsolutePath(), start, end, tv1, tv2);
-        Map<String, AnalyseResult> analyseResultMap = defectAnalyse.getAnalyseResult();
 
-        for (Map.Entry<String, AnalyseResult> entry : analyseResultMap.entrySet()) {
-            AnalyseResult analyseResult = entry.getValue();
-            analyseResult.setFileName(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1]);
-
+        SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(mFile.getAbsolutePath(), start, end);
+        if (!sequenceFileCheck.checkGeneFileIsNormal()) {
+            System.out.println("sequence file error!!!!");
+            AnalyseResult analyseResult = new AnalyseResult(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1]);
             AnalyseDao analyseDao = new AnalyseDaoImpl();
             analyseDao.saveAnalyseResultRes(analyseResult);
+        } else {
 
-//            System.out.println("========================");
-//            System.out.println("real position: " + analyseResult.getRealPosition());
-//            System.out.println("========================");
+            DefectAnalyseService defectAnalyse = new DefectAnalyse(mFile.getAbsolutePath(), start, end, tv1, tv2);
+            Map<String, AnalyseResult> analyseResultMap = defectAnalyse.getAnalyseResult();
+
+            for (Map.Entry<String, AnalyseResult> entry : analyseResultMap.entrySet()) {
+                AnalyseResult analyseResult = entry.getValue();
+                analyseResult.setFileName(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1]);
+
+                AnalyseDao analyseDao = new AnalyseDaoImpl();
+                analyseDao.saveAnalyseResultRes(analyseResult);
+            }
         }
     }
 }

@@ -5,8 +5,8 @@
     <file url="file://$PROJECT_DIR$/src/main/java/model/Analyse.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/model/Head.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/main/java/serviceImpl/DefectRecognition.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/java/serviceImpl/SequenceFileCheckImpl.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/util/MyFileReader.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/test/LPL1" charset="GBK" />
     <file url="PROJECT" charset="GBK" />
   </component>
 </project>

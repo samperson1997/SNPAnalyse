@@ -15,38 +15,38 @@ public class AnalyseResult implements java.io.Serializable {
     private String fileName;
 
     /**
-     * Òì³£ÔÚÆ¬¶ÎÉÏµÄÎ»ÖÃ
+     * ï¿½ì³£ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½Ïµï¿½Î»ï¿½ï¿½
      */
     private int position;
 
     /**
-     * Òì³£ÔÚÍêÕûDNAÆ¬¶ÎÉÏµÄÕæÊµÎ»ÖÃ
+     * ï¿½ì³£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½DNAÆ¬ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ÊµÎ»ï¿½ï¿½
      */
     private int realPosition;
 
     /**
-     * ÔÚÍêÕûCDSÆ¬¶ÎÉÏµÄÕæÊµÎ»ÖÃ
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CDSÆ¬ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ÊµÎ»ï¿½ï¿½
      */
     private int CDSPosition;
 
     /**
-     * ±äÒì°±»ùËáµÄÎ»ÖÃ
+     * ï¿½ï¿½ï¿½ì°±ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
      */
     private int secretPosition;
 
     /**
-     * Òì³£ËùÔÚDNAÆ¬¶ÎÇøÓò
+     * ï¿½ì³£ï¿½ï¿½ï¿½ï¿½DNAÆ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     private String area;
 
     /**
-     * Òì³£±ä»¯ĞÅÏ¢
+     * ï¿½ì³£ï¿½ä»¯ï¿½ï¿½Ï¢
      */
     private String changedInfo;
 
 
     /**
-     * °±»ùËá±ä»¯ĞÅÏ¢
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä»¯ï¿½ï¿½Ï¢
      */
     private String changedSecret;
 
@@ -54,6 +54,22 @@ public class AnalyseResult implements java.io.Serializable {
     public AnalyseResult() {
 
 
+    }
+
+    /**
+     * æµ‹åºå¤±è´¥æ–‡ä»¶çš„åˆ†æç»“æœï¼Œåªæœ‰æ–‡ä»¶åï¼Œå…¶ä»–çš„ä¸ºç©º
+     *
+     * @param fileName
+     */
+    public AnalyseResult(String fileName) {
+        this.fileName = fileName;
+        this.position = -1;
+        this.realPosition = -1;
+        this.CDSPosition = -1;
+        this.secretPosition = -1;
+        this.area = "";
+        this.changedInfo = "";
+        this.changedSecret = "failed file";
     }
 
     public AnalyseResult(int position, int realPosition, int CDSPosition, int secretPosition, String area, String changedInfo, String changedSecret) {

@@ -7,10 +7,7 @@ import main.java.daoImpl.GeneDaoImpl;
 import main.java.model.AnalyseResult;
 import main.java.service.DefectAnalyseService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DefectAnalyse implements DefectAnalyseService {
 
@@ -21,23 +18,34 @@ public class DefectAnalyse implements DefectAnalyseService {
     //TODO 目前只针对LPL
     private final String LPL = geneDao.searchGeneByType("LPL").getSort();
     private final String LPL_CDS = geneDao.searchGeneByType("LPL").getCds();
+    private String U_DNA;
 
 
     public DefectAnalyse(String path, int start, int end, double tv1, double tv2) {
         DefectRecognition defectRecognition = new DefectRecognition(path);
         dataMap = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
         analyseDao = new AnalyseDaoImpl();
+        U_DNA = dataMap.get("U_DNA");
     }
 
     @Override
     public Map<String, AnalyseResult> getAnalyseResult() {
         Map<String, AnalyseResult> analyseResultMap = new HashMap<>();
         List<String> changedList = new ArrayList<>();
+        List<String> ycList = new ArrayList<>();
 
-        //TODO 目前只针对LPL, 后面需要首先判断是什么类型的基因, 再找位置
+        // ycList 是确认异常的点位
+        ycList.addAll(Arrays.asList(dataMap.get("yc").split(";")));
+
         for (int i = 0; i < dataMap.get("sf_info").split(";").length; i++) {
+            // 查看双峰点位是不是在确认异常的点位
+            String sf_info = dataMap.get("sf_info").split(";")[i].split(":")[0];
+            if (!ycList.contains(sf_info)) {
+                continue;
+            }
+
             changedList.add(dataMap.get("sf_info").split(";")[i]);
-            String[] changedInfo = changedList.get(i).split(":");
+            String[] changedInfo = dataMap.get("sf_info").split(";")[i].split(":");
 
             AnalyseResult analyseResult = new AnalyseResult();
 
@@ -178,7 +186,7 @@ public class DefectAnalyse implements DefectAnalyseService {
 
             boolean isWrongResult = false;
             // 余数为0，向前拼接两位碱基构成密码子
-            if (CDSPosition % 3 == 2) {
+            if (CDSPosition % 3 == 0) {
                 if (CDSPosition < 2) {
                     isWrongResult = true;
                 } else {
@@ -188,7 +196,7 @@ public class DefectAnalyse implements DefectAnalyseService {
                 }
             }
             // 余数为1，向后拼接两位碱基构成密码子
-            else if (CDSPosition % 3 == 0) {
+            else if (CDSPosition % 3 == 1) {
                 if (CDSPosition < 0) {
                     isWrongResult = true;
                 } else {
@@ -198,7 +206,7 @@ public class DefectAnalyse implements DefectAnalyseService {
                 }
             }
             // 余数为2，取一前一后两位碱基构成密码子
-            else if (CDSPosition % 3 == 1) {
+            else if (CDSPosition % 3 == 2) {
                 if (CDSPosition < 1) {
                     isWrongResult = true;
                 } else {
@@ -211,7 +219,7 @@ public class DefectAnalyse implements DefectAnalyseService {
 
             // 找密码子对应的氨基酸
             if (isWrongResult) {
-                analyseResult.setChangedSecret("wrong startAnalyse result");
+                analyseResult.setChangedSecret("analyse failed");
             } else {
                 if (analyseDao.getSecret(U_secret) == null) {
                     analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getSim_name() + "=>unknown amino acid");
