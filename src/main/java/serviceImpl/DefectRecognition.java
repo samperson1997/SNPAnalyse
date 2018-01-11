@@ -186,7 +186,7 @@ public class DefectRecognition implements DefectRecognitionService {
             lastValue = 1;
         }
 
-        Map<Integer, Integer> sortedMap = sortMap(map);
+        Map<Integer, Integer> sortedMap = util.sortMap(map);
 
         //该值用于判断该范围最大值是否为峰值
         double isPeak = 0.6;
@@ -356,7 +356,7 @@ public class DefectRecognition implements DefectRecognitionService {
 //            System.out.println(key);
 //        }
 
-        Map<String, Integer> sortedMap = sortMap(data);
+        Map<String, Integer> sortedMap = util.sortMap(data);
 //        System.out.println("postMapSize: " + sortedMap.size());
 //        System.out.println("=====================");
 //        for (String key: sortedMap.keySet()) {
@@ -374,29 +374,6 @@ public class DefectRecognition implements DefectRecognitionService {
         }
 
         return null;
-    }
-
-    private <T> Map<T, Integer> sortMap(Map<T, Integer> oldMap) {
-        ArrayList<Map.Entry<T, Integer>> list = new ArrayList<Map.Entry<T, Integer>>(oldMap.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<T, Integer>>() {
-
-            @Override
-            public int compare(Map.Entry<T, Integer> arg0, Map.Entry<T, Integer> arg1) {
-                return Math.abs(arg1.getValue()) - Math.abs(arg0.getValue());
-            }
-        });
-        Map<T, Integer> newMap = new LinkedHashMap<T, Integer>();
-//        System.out.println("=====================");
-
-        for (int i = 0; i < list.size(); i++) {
-//            if (list.size() < 5) {
-//                System.out.println(list.get(i).getValue());
-//            }
-            newMap.put(list.get(i).getKey(), list.get(i).getValue());
-        }
-//        System.out.println("=====================");
-
-        return newMap;
     }
 
     private boolean isSlope(Map.Entry<String, Integer> e, String[] data9, String[] data10, String[] data11, String[] data12, String[] location, int i) {

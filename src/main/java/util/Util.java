@@ -12,7 +12,7 @@ public class Util {
         return s;
     }
 
-    public  <T> Map<T, Integer> sortMap(Map<T, Integer> oldMap) {
+    public <T> Map<T, Integer> sortMap(Map<T, Integer> oldMap) {
         ArrayList<Map.Entry<T, Integer>> list = new ArrayList<Map.Entry<T, Integer>>(oldMap.entrySet());
         Collections.sort(list, new Comparator<Map.Entry<T, Integer>>() {
 
