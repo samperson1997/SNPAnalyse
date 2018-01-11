@@ -69,7 +69,7 @@ public class AnalyseResult implements java.io.Serializable {
         this.secretPosition = -1;
         this.area = "";
         this.changedInfo = "";
-        this.changedSecret = "";
+        this.changedSecret = "failed file";
     }
 
     public AnalyseResult(int position, int realPosition, int CDSPosition, int secretPosition, String area, String changedInfo, String changedSecret) {
