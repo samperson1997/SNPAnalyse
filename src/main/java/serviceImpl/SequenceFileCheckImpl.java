@@ -65,7 +65,6 @@ public class SequenceFileCheckImpl implements SequenceFileCheck {
 
         String[][] ATCGValues = {GValues, AValues, TValues, CValues};
 
-        System.out.println("peakRanges:");
         for (int position = start; position < location.length - end; position++) {
             for (int i = 0; i < ATCGValues.length; i++) {
                 int peakPosition = getPeakPositionOfRange(round, position, ATCGValues[i]);
@@ -76,14 +75,16 @@ public class SequenceFileCheckImpl implements SequenceFileCheck {
         }
         Collections.sort(peakPositions);
 
+        // 计算峰之间的间距 因为头部不稳定，从第五个开始取
         ArrayList<Integer> peakRanges = new ArrayList<>();
-        for (int i = 1; i < peakPositions.size(); i++) {
+        for (int i = 6; i < peakPositions.size(); i++) {
             peakRanges.add(peakPositions.get(i) - peakPositions.get(i - 1));
         }
 
-        for (int position :
+        System.out.println("peakRanges:");
+        for (int p :
                 peakRanges) {
-            System.out.print(position + " ");
+            System.out.print(p + " ");
         }
         System.out.println();
 
