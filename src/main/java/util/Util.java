@@ -34,4 +34,25 @@ public class Util {
 
         return newMap;
     }
+
+    public double calVariance(ArrayList<Integer> arrayList) {
+
+        int sum = 0;
+        for (int num :
+                arrayList) {
+            sum += num;
+        }
+        double average;
+        average = sum / (double) arrayList.size();
+
+        double varianceSum = 0;
+
+        for (int num :
+                arrayList) {
+            varianceSum += Math.pow(num - average, 2);
+        }
+
+        return varianceSum / (double) arrayList.size();
+
+    }
 }

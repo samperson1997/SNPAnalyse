@@ -273,13 +273,13 @@ public class DefectRecognition implements DefectRecognitionService {
             double n1 = e1.getValue();
             double n2 = e2.getValue();
 
-            System.out.println("===================");
-            System.out.println("i: " + i);
-            System.out.println("n1: " + n1 + ";" + e1.getKey());
-            System.out.println("n2: " + n2 + ";" + e2.getKey());
+//            System.out.println("===================");
+//            System.out.println("i: " + i);
+//            System.out.println("n1: " + n1 + ";" + e1.getKey());
+//            System.out.println("n2: " + n2 + ";" + e2.getKey());
 //            System.out.println("r1: " + r1);
 //            System.out.println("r2: " + r2);
-            System.out.println("===================");
+//            System.out.println("===================");
 
             //该值用于判断双峰是否由背景值过高造成
             double tv3 = 0.2;
