@@ -160,9 +160,11 @@ public class DefectRecognition implements DefectRecognitionService {
 
     private int getMaxOfRange(String[] data, String location, int round) {
         Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+//        System.out.println(round);
         int half = round / 2 + 1;
-        int start = Integer.valueOf(location) - half;
-        int end = Integer.valueOf(location) + half;
+//        System.out.println(half);
+        int start = Integer.valueOf(location) - round;
+        int end = Integer.valueOf(location) + round;
         int firstValue = 0;
         int lastValue = 0;
 
@@ -238,7 +240,16 @@ public class DefectRecognition implements DefectRecognitionService {
         ArrayList<Integer> confirmedDoublePeak = new ArrayList<Integer>(); //确认双峰异常 原变量名为：yc
         ArrayList<Integer> suspectedDoublePeak = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
         ArrayList<Integer> sequencingError = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
-        int round = data9.length / location.length / 2;
+        int round = 6;
+//        for (int i = 1; i < location.length; i++) {
+//            int curRound = (Integer.parseInt(location[i]) - Integer.parseInt(location[i - 1])) / 2;
+//            if (curRound < round) {
+//                round = curRound;
+//            }
+//        }
+//        round = Math.min(round, data11.length / location.length / 2);
+//        round = Math.min(round, data12.length / location.length / 2);
+        System.out.println(round);
 
         Map<String, String> channelMap = new HashMap<String, String>();
         channelMap.put("data9", "G");
@@ -262,13 +273,13 @@ public class DefectRecognition implements DefectRecognitionService {
             double n1 = e1.getValue();
             double n2 = e2.getValue();
 
-//            System.out.println("===================");
-//            System.out.println("i: " + i);
-//            System.out.println("n1: " + n1);
-//            System.out.println("n2: " + n2);
+            System.out.println("===================");
+            System.out.println("i: " + i);
+            System.out.println("n1: " + n1 + ";" + e1.getKey());
+            System.out.println("n2: " + n2 + ";" + e2.getKey());
 //            System.out.println("r1: " + r1);
 //            System.out.println("r2: " + r2);
-//            System.out.println("===================");
+            System.out.println("===================");
 
             //该值用于判断双峰是否由背景值过高造成
             double tv3 = 0.2;
