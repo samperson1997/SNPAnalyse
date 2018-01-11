@@ -72,6 +72,28 @@ public class AnalyseResult implements java.io.Serializable {
         this.changedSecret = "failed file";
     }
 
+    /**
+     * 问题文件的分析结果
+     *
+     * @param error
+     */
+    public AnalyseResult(int error) {
+        this.fileName = "";
+        this.position = -1;
+        this.realPosition = -1;
+        this.CDSPosition = -1;
+        this.secretPosition = -1;
+        this.area = "";
+        this.changedInfo = "";
+        switch (error){
+            case 1:
+                this.changedSecret = "suspect: continued double peaks";
+//            case 2:
+//                this.changedSecret = "appear N";
+        }
+
+    }
+
     public AnalyseResult(int position, int realPosition, int CDSPosition, int secretPosition, String area, String changedInfo, String changedSecret) {
         this.position = position;
         this.realPosition = realPosition;

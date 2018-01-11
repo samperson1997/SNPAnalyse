@@ -36,41 +36,44 @@ public class DefectAnalyse implements DefectAnalyseService {
 
         // ycList 是确认异常的点位
         ycList.addAll(Arrays.asList(dataMap.get("yc").split(";")));
+        if (ycList.size() > 20) {
+            AnalyseResult analyseResult = new AnalyseResult(1);
+            analyseResultMap.put("", analyseResult);
+        } else {
+            for (int i = 0; i < dataMap.get("sf_info").split(";").length; i++) {
+                // 查看双峰点位是不是在确认异常的点位
+                String sf_info = dataMap.get("sf_info").split(";")[i].split(":")[0];
+                if (!ycList.contains(sf_info)) {
+                    continue;
+                }
 
-        for (int i = 0; i < dataMap.get("sf_info").split(";").length; i++) {
-            // 查看双峰点位是不是在确认异常的点位
-            String sf_info = dataMap.get("sf_info").split(";")[i].split(":")[0];
-            if (!ycList.contains(sf_info)) {
-                continue;
-            }
+                changedList.add(dataMap.get("sf_info").split(";")[i]);
+                String[] changedInfo = dataMap.get("sf_info").split(";")[i].split(":");
 
-            changedList.add(dataMap.get("sf_info").split(";")[i]);
-            String[] changedInfo = dataMap.get("sf_info").split(";")[i].split(":");
+                AnalyseResult analyseResult = new AnalyseResult();
 
-            AnalyseResult analyseResult = new AnalyseResult();
-
-            if (!changedInfo[0].equals("")) {
+                if (!changedInfo[0].equals("")) {
                 /*
                  * 异常在片段上的位置
                  */
-                int position = Integer.parseInt(changedInfo[0]);
-                analyseResult.setPosition(position);
+                    int position = Integer.parseInt(changedInfo[0]);
+                    analyseResult.setPosition(position);
 
                 /*
                  * 异常在完整DNA片段上的真实位置
                  */
-                int realPosition = getLocations(Integer.parseInt(changedInfo[0]));
-                analyseResult.setRealPosition(realPosition);
+                    int realPosition = getLocations(Integer.parseInt(changedInfo[0]));
+                    analyseResult.setRealPosition(realPosition);
 
-                // -2表示出现N, 一般出现在结果的前10个或后10个碱基
-                // 这个位置由于测序方法的问题, 会导致前后端无法测序准确, 可以直接跳过
-                if (realPosition != -2) {
-                    startAnalyse(analyseResult, realPosition, changedInfo, position);
-                    analyseResultMap.put(changedInfo[0], analyseResult);
+                    // -2表示出现N, 一般出现在结果的前10个或后10个碱基
+                    // 这个位置由于测序方法的问题, 会导致前后端无法测序准确, 可以直接跳过
+                    if (realPosition != -2) {
+                        startAnalyse(analyseResult, realPosition, changedInfo, position);
+                        analyseResultMap.put(changedInfo[0], analyseResult);
+                    }
                 }
             }
         }
-
         return analyseResultMap;
     }
 
