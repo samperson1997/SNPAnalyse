@@ -77,46 +77,10 @@ public class DefectAnalyse implements DefectAnalyseService {
         return analyseResultMap;
     }
 
-
-    /**
-     * 获得在全长中的位置
-     */
-    private int getLocations(int position) {
-        String[] locations = dataMap.get("N_DNA").split("");
-        String gs = "";
-
-        int start = (position - 20 < 0) ? 0 : (position - 20);
-//        System.out.println("========================");
-        for (int h = start; h < position; h++) {
-            gs += locations[h];
-            if (locations[h].equals("N")) {
-                return -2;
-            }
-//            System.out.print(locations[h]);
-        }
-//        System.out.println("\n========================");
-
-        //匹配标准DNA序列
-        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-        standardDna = standardDna.toUpperCase();
-        //匹配在序列中的位置
-        int sindex = standardDna.indexOf(gs);
-
-//        System.out.println("========================");
-//        System.out.println(sindex);
-//        System.out.println("========================");
-
-        if (sindex == -1) { //匹配失败
-            return -1;
-        } else { //匹配成功
-            return sindex + gs.length();
-        }
-    }
-
     private void startAnalyse(AnalyseResult analyseResult, int realPosition, String[] changedInfo, int position) {
         /*
          * 异常在完整CDS片段上的真实位置
-         * -1表示不再CDS序列上
+         * -1表示不在CDS序列上
          */
         int CDSPosition = getCDSPosition(realPosition);
         analyseResult.setCDSPosition(CDSPosition);
@@ -242,6 +206,12 @@ public class DefectAnalyse implements DefectAnalyseService {
         System.out.println(analyseResult.toString());
     }
 
+    /**
+     * 获得在CDS序列上的位置
+     *
+     * @param realPosition 在全长的位置
+     * @return 在CDS序列上的位置
+     */
     private int getCDSPosition(int realPosition) {
         int CDSPosition = 0;
         int count = 0;
@@ -280,4 +250,43 @@ public class DefectAnalyse implements DefectAnalyseService {
 
         return CDSPosition - 1;
     }
+
+    /**
+     * 获得在全长的位置
+     *
+     * @param position 在序列片段上的位置
+     * @return 在全长的位置
+     */
+    private int getLocations(int position) {
+        String[] locations = dataMap.get("N_DNA").split("");
+        String gs = "";
+
+        int start = (position - 20 < 0) ? 0 : (position - 20);
+        System.out.println("========================");
+        for (int h = start; h < position - 1; h++) {
+            gs += locations[h];
+            if (locations[h].equals("N")) {
+                return -2;
+            }
+            System.out.print(locations[h]);
+        }
+        System.out.println("\n========================");
+
+        //匹配标准DNA序列
+        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+        standardDna = standardDna.toUpperCase();
+        //匹配在序列中的位置
+        int sindex = standardDna.indexOf(gs);
+
+//        System.out.println("========================");
+//        System.out.println(sindex);
+//        System.out.println("========================");
+
+        if (sindex == -1) { //匹配失败
+            return -1;
+        } else { //匹配成功
+            return sindex + gs.length() + 1;
+        }
+    }
+
 }
