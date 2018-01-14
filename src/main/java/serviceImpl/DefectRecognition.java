@@ -275,7 +275,7 @@ public class DefectRecognition implements DefectRecognitionService {
             double n2 = e2.getValue();
 
             String basic=e1.getKey();
-
+            boolean needCheck=false;
 //            System.out.println("===================");
 //            System.out.println("i: " + i);
 //            System.out.println("n1: " + n1 + ";" + e1.getKey());
@@ -310,17 +310,23 @@ public class DefectRecognition implements DefectRecognitionService {
                     r2 += (i + 1 + ";");
                 }
                 else{
-                    if(!basic.equals(DNA[i])){
-                        singlePeakInfo+=i+1+":"+DNA[i]+"=>"+basic+";";
-                    }
+                    needCheck=true;
                 }
 //                }
             } else {
                 if (Math.abs(n2) / Math.abs(n1) > tv3) {
                     sequencingError.add(i);
                 }
+                else{
+                    needCheck=true;
+                }
             }
-
+            if(needCheck){
+                if(!basic.equals(DNA[i])){
+                    singlePeakInfo+=i+1+":"+DNA[i]+"=>"+basic+";";
+                    DNA[i] = basic;
+                }
+            }
         }
 
         String U_DNA = "";
