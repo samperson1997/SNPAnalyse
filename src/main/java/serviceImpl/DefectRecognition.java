@@ -231,6 +231,7 @@ public class DefectRecognition implements DefectRecognitionService {
         //正常的DNA序列
         String N_DNA = "";
         String doublePeakInfo = ""; //双峰信息 原变量名为SFInfo
+        String singlePeakInfo="";//单峰信息
         for (int n = 0; n < DNA.length; n++) {
             N_DNA += DNA[n];
         }
@@ -273,6 +274,8 @@ public class DefectRecognition implements DefectRecognitionService {
             double n1 = e1.getValue();
             double n2 = e2.getValue();
 
+            String basic=e1.getKey();
+
 //            System.out.println("===================");
 //            System.out.println("i: " + i);
 //            System.out.println("n1: " + n1 + ";" + e1.getKey());
@@ -306,12 +309,18 @@ public class DefectRecognition implements DefectRecognitionService {
                     doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
                     r2 += (i + 1 + ";");
                 }
+                else{
+                    if(!basic.equals(DNA[i])){
+                        singlePeakInfo+=i+1+":"+DNA[i]+"=>"+basic+";";
+                    }
+                }
 //                }
             } else {
                 if (Math.abs(n2) / Math.abs(n1) > tv3) {
                     sequencingError.add(i);
                 }
             }
+
         }
 
         String U_DNA = "";
@@ -331,6 +340,7 @@ public class DefectRecognition implements DefectRecognitionService {
         dataMap.put("U_DNA", U_DNA);
         dataMap.put("N_DNA", N_DNA);
         dataMap.put("sf_info", util.deleteEnd(doublePeakInfo));
+        dataMap.put("single_peak_info",util.deleteEnd(singlePeakInfo));
         dataMap.put("sequencingError", util.deleteEnd(sequencingErrorString));
 //        System.out.println(sequencingErrorString);
 
