@@ -33,13 +33,13 @@ public class DefectAnalyse implements DefectAnalyseService {
         Map<String, AnalyseResult> analyseResultMap = new HashMap<>();
         List<String> changedList = new ArrayList<>();
         List<String> ycList = new ArrayList<>();
-        List<String> singleList=new ArrayList<>();
+        List<String> singleList = new ArrayList<>();
 
         // ycList 是确认异常的点位
         ycList.addAll(Arrays.asList(dataMap.get("yc").split(";")));
         singleList.addAll(Arrays.asList(dataMap.get("single_peak_info").split(";")));
 
-        if (ycList.size() > 20||singleList.size()>20) {
+        if (ycList.size() > 20 || singleList.size() > 20) {
             AnalyseResult analyseResult = new AnalyseResult(1);
             analyseResultMap.put("", analyseResult);
         } else {
@@ -71,23 +71,23 @@ public class DefectAnalyse implements DefectAnalyseService {
                     // -2表示出现N, 一般出现在结果的前10个或后10个碱基
                     // 这个位置由于测序方法的问题, 会导致前后端无法测序准确, 可以直接跳过
                     if (realPosition != -2) {
-                        String changedInformation = changedInfo[1].charAt(0) + "=>" + changedInfo[1].charAt(1);
+                        String changedInformation = changedInfo[1].charAt(1) + "=>" + changedInfo[1].charAt(0);
                         startAnalyse(analyseResult, realPosition, changedInformation, position);
                         analyseResultMap.put(changedInfo[0], analyseResult);
                     }
                 }
             }
 
-            for(int i=0;i<singleList.size();i++){
+            for (int i = 0; i < singleList.size(); i++) {
                 AnalyseResult analyseResult = new AnalyseResult();
-                String items[]=singleList.get(i).split(":");
-                int pos=Integer.parseInt(items[0]);
+                String items[] = singleList.get(i).split(":");
+                int pos = Integer.parseInt(items[0]);
                 analyseResult.setPosition(pos);
                 int realPosition = getLocations(pos);
                 analyseResult.setRealPosition(realPosition);
                 if (realPosition != -2) {
                     startAnalyse(analyseResult, realPosition, items[1], pos);
-                    analyseResultMap.put(pos+"", analyseResult);
+                    analyseResultMap.put(pos + "", analyseResult);
                 }
             }
         }
@@ -105,11 +105,8 @@ public class DefectAnalyse implements DefectAnalyseService {
         /*
          * 氨基酸变化位置
          */
-        if (CDSPosition / 3 == 0) {
-            analyseResult.setSecretPosition(0);
-        } else {
-            analyseResult.setSecretPosition(CDSPosition / 3 + 1);
-        }
+
+        analyseResult.setSecretPosition(CDSPosition / 3);
 
         /*
          * 异常所在DNA片段区域
@@ -229,7 +226,7 @@ public class DefectAnalyse implements DefectAnalyseService {
      * @return 在CDS序列上的位置
      */
     private int getCDSPosition(int realPosition) {
-        if(realPosition<0){
+        if (realPosition < 0) {
             return realPosition;
         }
         int CDSPosition = 0;
