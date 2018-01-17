@@ -233,11 +233,12 @@ public class DefectAnalyse implements DefectAnalyseService {
         int count = 0;
         char gene[] = LPL.toCharArray();
         char cds[] = LPL_CDS.toCharArray();
-        for (int k = 0; k <= realPosition; k++) {
+        int cursor=1;
+        for (int k = 0; k < realPosition; k++) {
             if (cds[CDSPosition + count] == gene[k]) {
                 count++;
-                if (k == realPosition) {
-                    int u = 0;
+                if (k == realPosition-1) {
+                    int u = 1;
                     while (count <= 20) {
                         if (cds[CDSPosition + count] == gene[k + u]) {
                             count++;
@@ -253,18 +254,26 @@ public class DefectAnalyse implements DefectAnalyseService {
                     }
 
                 }
-            } else {
-                if (k == realPosition) {
+            }
+            else {
+                if (k == realPosition-1) {
                     CDSPosition = 0;
                 }
                 if (count > 20) {
                     CDSPosition += count;
                 }
+                else{
+                    if(count>0){
+                        k=cursor;
+                        cursor++;
+                    }
+                }
+
                 count = 0;
             }
         }
 
-        return CDSPosition - 1;
+        return CDSPosition;
     }
 
     /**
