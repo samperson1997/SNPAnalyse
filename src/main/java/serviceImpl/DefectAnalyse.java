@@ -6,6 +6,7 @@ import main.java.daoImpl.AnalyseDaoImpl;
 import main.java.daoImpl.GeneDaoImpl;
 import main.java.model.AnalyseResult;
 import main.java.service.DefectAnalyseService;
+import main.java.util.Util;
 
 import java.util.*;
 
@@ -15,6 +16,8 @@ public class DefectAnalyse implements DefectAnalyseService {
     private AnalyseDao analyseDao;
     private static GeneDao geneDao = new GeneDaoImpl();
     private String U_DNA;
+    private String[] locations;
+    private Util util;
 
     //TODO 目前只针对LPL
     private final String LPL = geneDao.searchGeneByType("LPL").getSort();
@@ -26,6 +29,8 @@ public class DefectAnalyse implements DefectAnalyseService {
         dataMap = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
         analyseDao = new AnalyseDaoImpl();
         U_DNA = dataMap.get("U_DNA");
+        locations = dataMap.get("N_DNA").split("");
+        util = new Util();
     }
 
     @Override
@@ -34,6 +39,7 @@ public class DefectAnalyse implements DefectAnalyseService {
         List<String> changedList = new ArrayList<>();
         List<String> ycList = new ArrayList<>();
         List<String> singleList = new ArrayList<>();
+        checkSinglePeak();
 
         // ycList 是确认异常的点位
         ycList.addAll(Arrays.asList(dataMap.get("yc").split(";")));
@@ -92,6 +98,39 @@ public class DefectAnalyse implements DefectAnalyseService {
             }
         }
         return analyseResultMap;
+    }
+
+    private void checkSinglePeak(){
+        int leng=locations.length;
+        int real_pos=0;
+        int seq_pos=0;
+        String result="";
+        while(seq_pos<leng){
+            real_pos=getLocations(seq_pos);
+            if(real_pos>=0){
+                break;
+            }
+            seq_pos++;
+        }
+        if(real_pos<0){
+            return;
+        }
+        int i=0;
+        char LPLGene[]=LPL.toCharArray();
+        while(i<seq_pos){
+            result+=i+":"+LPLGene[real_pos-seq_pos+i]+"=>"+locations[i]+";";
+            i++;
+        }
+        int j=real_pos;
+        i=seq_pos;
+        while(i<leng){
+            if(!locations[i].equals(""+LPLGene[j])){
+                result+=i+":"+LPLGene[j]+"=>"+locations[i]+";";
+            }
+            i++;
+            j++;
+        }
+        dataMap.put("single_peak_info", util.deleteEnd(result));
     }
 
     private void startAnalyse(AnalyseResult analyseResult, int realPosition, String changedInformation, int position) {
@@ -283,7 +322,7 @@ public class DefectAnalyse implements DefectAnalyseService {
      * @return 在全长的位置
      */
     private int getLocations(int position) {
-        String[] locations = dataMap.get("N_DNA").split("");
+
         String gs = "";
 
         int start = (position - 20 < 0) ? 0 : (position - 20);
