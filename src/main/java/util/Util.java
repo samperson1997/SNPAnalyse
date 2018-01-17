@@ -55,4 +55,14 @@ public class Util {
         return varianceSum / (double) arrayList.size();
 
     }
+
+    public List<Integer> getAllPlaces(String complete, String sub) {
+        int start = 0;
+        List<Integer> result = new ArrayList<>();
+        while (complete.indexOf(sub, start) != -1) {
+            result.add(complete.indexOf(sub, start));
+            start = complete.indexOf(sub, start) + 1;
+        }
+        return result;
+    }
 }
