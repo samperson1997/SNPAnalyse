@@ -119,6 +119,7 @@ public class DefectAnalyse implements DefectAnalyseService {
         char LPLGene[]=LPL.toCharArray();
         while(i<seq_pos){
             result+=i+":"+LPLGene[real_pos-seq_pos+i]+"=>"+locations[i]+";";
+            locations[i]=LPLGene[real_pos-seq_pos+i]+"";
             i++;
         }
         int j=real_pos;
@@ -126,6 +127,7 @@ public class DefectAnalyse implements DefectAnalyseService {
         while(i<leng){
             if(!locations[i].equals(""+LPLGene[j])){
                 result+=i+":"+LPLGene[j]+"=>"+locations[i]+";";
+                locations[i]=LPLGene[j]+"";
             }
             i++;
             j++;
@@ -296,7 +298,7 @@ public class DefectAnalyse implements DefectAnalyseService {
             }
             else {
                 if (k == realPosition-1) {
-                    CDSPosition = 0;
+                    CDSPosition = -1;
                 }
                 if (count > 20) {
                     CDSPosition += count;
