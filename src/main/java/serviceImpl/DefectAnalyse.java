@@ -87,9 +87,9 @@ public class DefectAnalyse implements DefectAnalyseService {
             for (int i = 0; i < singleList.size(); i++) {
                 AnalyseResult analyseResult = new AnalyseResult();
                 String items[] = singleList.get(i).split(":");
-                int pos = Integer.parseInt(items[0]);
+                int pos = Integer.parseInt(items[0].split("-")[1]);
                 analyseResult.setPosition(pos);
-                int realPosition = getLocations(pos);
+                int realPosition = Integer.parseInt(items[0].split("-")[0]);
                 analyseResult.setRealPosition(realPosition);
                 if (realPosition != -2) {
                     startAnalyse(analyseResult, realPosition, items[1], pos);
@@ -130,7 +130,7 @@ public class DefectAnalyse implements DefectAnalyseService {
 
         while(seq_pos<leng){
             if(!locations[seq_pos].equals(""+LPLGene[real_pos])){
-                result+=seq_pos+":"+LPLGene[real_pos]+"=>"+locations[seq_pos]+";";
+                result+=(real_pos+1)+"-"+(seq_pos+1)+":"+LPLGene[real_pos]+"=>"+locations[seq_pos]+";";
                 locations[seq_pos]=LPLGene[real_pos]+"";
             }
             seq_pos++;
