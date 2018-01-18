@@ -6,6 +6,7 @@ import main.java.daoImpl.AnalyseDaoImpl;
 import main.java.daoImpl.GeneDaoImpl;
 import main.java.model.AnalyseResult;
 import main.java.service.DefectAnalyseService;
+import main.java.util.Util;
 
 import java.util.*;
 
@@ -15,6 +16,8 @@ public class DefectAnalyse implements DefectAnalyseService {
     private AnalyseDao analyseDao;
     private static GeneDao geneDao = new GeneDaoImpl();
     private String U_DNA;
+    private String[] locations;
+    private Util util;
 
     //TODO 目前只针对LPL
     private final String LPL = geneDao.searchGeneByType("LPL").getSort();
@@ -26,6 +29,8 @@ public class DefectAnalyse implements DefectAnalyseService {
         dataMap = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
         analyseDao = new AnalyseDaoImpl();
         U_DNA = dataMap.get("U_DNA");
+        locations = dataMap.get("N_DNA").split("");
+        util = new Util();
     }
 
     @Override
@@ -33,10 +38,14 @@ public class DefectAnalyse implements DefectAnalyseService {
         Map<String, AnalyseResult> analyseResultMap = new HashMap<>();
         List<String> changedList = new ArrayList<>();
         List<String> ycList = new ArrayList<>();
+        List<String> singleList = new ArrayList<>();
+        checkSinglePeak();
 
         // ycList 是确认异常的点位
         ycList.addAll(Arrays.asList(dataMap.get("yc").split(";")));
-        if (ycList.size() > 20) {
+        singleList.addAll(Arrays.asList(dataMap.get("single_peak_info").split(";")));
+
+        if (ycList.size() > 20 || singleList.size() > 20) {
             AnalyseResult analyseResult = new AnalyseResult(1);
             analyseResultMap.put("", analyseResult);
         } else {
@@ -68,55 +77,68 @@ public class DefectAnalyse implements DefectAnalyseService {
                     // -2表示出现N, 一般出现在结果的前10个或后10个碱基
                     // 这个位置由于测序方法的问题, 会导致前后端无法测序准确, 可以直接跳过
                     if (realPosition != -2) {
-                        startAnalyse(analyseResult, realPosition, changedInfo, position);
+                        String changedInformation = changedInfo[1].charAt(1) + "=>" + changedInfo[1].charAt(0);
+                        startAnalyse(analyseResult, realPosition, changedInformation, position);
                         analyseResultMap.put(changedInfo[0], analyseResult);
                     }
+                }
+            }
+
+            for (int i = 0; i < singleList.size(); i++) {
+                AnalyseResult analyseResult = new AnalyseResult();
+                String items[] = singleList.get(i).split(":");
+                int pos = Integer.parseInt(items[0]);
+                analyseResult.setPosition(pos);
+                int realPosition = getLocations(pos);
+                analyseResult.setRealPosition(realPosition);
+                if (realPosition != -2) {
+                    startAnalyse(analyseResult, realPosition, items[1], pos);
+                    analyseResultMap.put(pos + "", analyseResult);
                 }
             }
         }
         return analyseResultMap;
     }
 
-
-    /**
-     * 获得在全长中的位置
-     */
-    private int getLocations(int position) {
-        String[] locations = dataMap.get("N_DNA").split("");
-        String gs = "";
-
-        int start = (position - 20 < 0) ? 0 : (position - 20);
-//        System.out.println("========================");
-        for (int h = start; h < position; h++) {
-            gs += locations[h];
-            if (locations[h].equals("N")) {
-                return -2;
+    private void checkSinglePeak(){
+        int leng=locations.length;
+        int real_pos=0;
+        int seq_pos=0;
+        String result="";
+        while(seq_pos<leng){
+            real_pos=getLocations(seq_pos);
+            if(real_pos>=0){
+                break;
             }
-//            System.out.print(locations[h]);
+            seq_pos++;
         }
-//        System.out.println("\n========================");
-
-        //匹配标准DNA序列
-        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-        standardDna = standardDna.toUpperCase();
-        //匹配在序列中的位置
-        int sindex = standardDna.indexOf(gs);
-
-//        System.out.println("========================");
-//        System.out.println(sindex);
-//        System.out.println("========================");
-
-        if (sindex == -1) { //匹配失败
-            return -1;
-        } else { //匹配成功
-            return sindex + gs.length();
+        if(real_pos<0){
+            return;
         }
+        int i=0;
+        char LPLGene[]=LPL.toCharArray();
+        while(i<seq_pos){
+            result+=i+":"+LPLGene[real_pos-seq_pos+i]+"=>"+locations[i]+";";
+            locations[i]=LPLGene[real_pos-seq_pos+i]+"";
+            i++;
+        }
+        int j=real_pos;
+        i=seq_pos;
+        while(i<leng){
+            if(!locations[i].equals(""+LPLGene[j])){
+                result+=i+":"+LPLGene[j]+"=>"+locations[i]+";";
+                locations[i]=LPLGene[j]+"";
+            }
+            i++;
+            j++;
+        }
+        dataMap.put("single_peak_info", util.deleteEnd(result));
     }
 
-    private void startAnalyse(AnalyseResult analyseResult, int realPosition, String[] changedInfo, int position) {
+    private void startAnalyse(AnalyseResult analyseResult, int realPosition, String changedInformation, int position) {
         /*
          * 异常在完整CDS片段上的真实位置
-         * -1表示不再CDS序列上
+         * -1表示不在CDS序列上
          */
         int CDSPosition = getCDSPosition(realPosition);
         analyseResult.setCDSPosition(CDSPosition);
@@ -124,11 +146,8 @@ public class DefectAnalyse implements DefectAnalyseService {
         /*
          * 氨基酸变化位置
          */
-        if (CDSPosition / 3 == 0) {
-            analyseResult.setSecretPosition(0);
-        } else {
-            analyseResult.setSecretPosition(CDSPosition / 3 + 1);
-        }
+
+        analyseResult.setSecretPosition(CDSPosition / 3);
 
         /*
          * 异常所在DNA片段区域
@@ -139,7 +158,6 @@ public class DefectAnalyse implements DefectAnalyseService {
         /*
          * 异常变化信息
          */
-        String changedInformation = changedInfo[1].charAt(0) + "=>" + changedInfo[1].charAt(1);
         analyseResult.setChangedInfo(changedInformation);
 
         /*
@@ -242,16 +260,26 @@ public class DefectAnalyse implements DefectAnalyseService {
         System.out.println(analyseResult.toString());
     }
 
+    /**
+     * 获得在CDS序列上的位置
+     *
+     * @param realPosition 在全长的位置
+     * @return 在CDS序列上的位置
+     */
     private int getCDSPosition(int realPosition) {
+        if (realPosition < 0) {
+            return realPosition;
+        }
         int CDSPosition = 0;
         int count = 0;
         char gene[] = LPL.toCharArray();
         char cds[] = LPL_CDS.toCharArray();
-        for (int k = 0; k <= realPosition; k++) {
+        int cursor=1;
+        for (int k = 0; k < realPosition; k++) {
             if (cds[CDSPosition + count] == gene[k]) {
                 count++;
-                if (k == realPosition) {
-                    int u = 0;
+                if (k == realPosition-1) {
+                    int u = 1;
                     while (count <= 20) {
                         if (cds[CDSPosition + count] == gene[k + u]) {
                             count++;
@@ -267,17 +295,64 @@ public class DefectAnalyse implements DefectAnalyseService {
                     }
 
                 }
-            } else {
-                if (k == realPosition) {
-                    CDSPosition = 0;
+            }
+            else {
+                if (k == realPosition-1) {
+                    CDSPosition = -1;
                 }
                 if (count > 20) {
                     CDSPosition += count;
                 }
+                else{
+                    if(count>0){
+                        k=cursor;
+                        cursor++;
+                    }
+                }
+
                 count = 0;
             }
         }
 
-        return CDSPosition - 1;
+        return CDSPosition;
     }
+
+    /**
+     * 获得在全长的位置
+     *
+     * @param position 在序列片段上的位置
+     * @return 在全长的位置
+     */
+    private int getLocations(int position) {
+
+        String gs = "";
+
+        int start = (position - 20 < 0) ? 0 : (position - 20);
+        System.out.println("========================");
+        for (int h = start; h < position - 1; h++) {
+            gs += locations[h];
+            if (locations[h].equals("N")) {
+                return -2;
+            }
+            System.out.print(locations[h]);
+        }
+        System.out.println("\n========================");
+
+        //匹配标准DNA序列
+        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+        standardDna = standardDna.toUpperCase();
+        //匹配在序列中的位置
+        int sindex = standardDna.indexOf(gs);
+
+//        System.out.println("========================");
+//        System.out.println(sindex);
+//        System.out.println("========================");
+
+        if (sindex == -1) { //匹配失败
+            return -1;
+        } else { //匹配成功
+            return sindex + gs.length() + 1;
+        }
+    }
+
 }

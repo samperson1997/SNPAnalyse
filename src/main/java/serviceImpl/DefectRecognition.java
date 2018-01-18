@@ -98,7 +98,7 @@ public class DefectRecognition implements DefectRecognitionService {
 
         //匹配标准DNA序列
 //        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
+        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
         standardDna = standardDna.toUpperCase();
 //        System.out.println(standardDna);
         //匹配在序列中的位置
@@ -123,11 +123,7 @@ public class DefectRecognition implements DefectRecognitionService {
             System.out.println("===============");
             System.out.println("start + i + 1: " + (start + i + 1));
             System.out.println("ck_s: " + ck_s);
-            //todo 修改此处匹配方式 此方法有漏洞
-//            if (res.indexOf(start + i + 1 + "") == -1) {
-//                cf += ck_s;
-//                continue;
-//            }
+
             String sf = sfMap.get(start + i + 1 + "");
             if (sf != null) {
                 System.out.println("sf: " + sf);
@@ -142,20 +138,21 @@ public class DefectRecognition implements DefectRecognitionService {
                 cf += ck_s;
                 System.out.println("cf: " + cf);
             }
+
+            List<Integer> positions = util.getAllPlaces(standardDna, cf);
+            for (int j = 0; j < positions.size(); j++) {
+                System.out.print(positions.get(j) + ";");
+            }
+            System.out.println();
 //            System.out.println("===============");
         }
-        int eindex = standardDna.substring(gg).indexOf(cf);
+        int eindex = standardDna.indexOf(cf);
         System.out.println("正常的20位：" + ckString);
 //        int eindex = standardDna.indexOf(cf);
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("cf: " + cf);
         System.out.println("eindex: " + eindex);
-        System.out.println("....................");
-        if (standardDna.indexOf(cf) == -1) {
-            return sindex + ";-1";
-        } else {
-            return sindex + ";" + (eindex - 1);
-        }
+        return sindex + ";" + eindex;
     }
 
     private int getMaxOfRange(String[] data, String location, int round) {
@@ -214,13 +211,16 @@ public class DefectRecognition implements DefectRecognitionService {
 
 //        return 0;
     }
+    //tgtgtgcagtaggagccggggtc
 
 
     @Override
     public Map<String, String> getAnalyseRes(int start, int end, double tv1, double tv2) {
+        tv2 = 0.1;
         dataMap = dataAc.getAllData();
         String r1 = "";
         String r2 = "";
+        System.out.println(dataMap.get("PBAS 2"));
         String[] DNA = dataMap.get("PBAS 2").split("");
         String[] location = dataMap.get("PLOC 2").split(";");
         String[] data9 = dataMap.get("DATA 9").split(";");
@@ -231,6 +231,7 @@ public class DefectRecognition implements DefectRecognitionService {
         //正常的DNA序列
         String N_DNA = "";
         String doublePeakInfo = ""; //双峰信息 原变量名为SFInfo
+
         for (int n = 0; n < DNA.length; n++) {
             N_DNA += DNA[n];
         }
@@ -273,6 +274,8 @@ public class DefectRecognition implements DefectRecognitionService {
             double n1 = e1.getValue();
             double n2 = e2.getValue();
 
+
+
 //            System.out.println("===================");
 //            System.out.println("i: " + i);
 //            System.out.println("n1: " + n1 + ";" + e1.getKey());
@@ -306,12 +309,15 @@ public class DefectRecognition implements DefectRecognitionService {
                     doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
                     r2 += (i + 1 + ";");
                 }
+
 //                }
             } else {
                 if (Math.abs(n2) / Math.abs(n1) > tv3) {
                     sequencingError.add(i);
                 }
+
             }
+
         }
 
         String U_DNA = "";

@@ -85,8 +85,6 @@ public class Analyse implements java.io.Serializable {
         this.fileName = fileName;
     }
 
-    @Column(name = "data9", nullable = false)
-
     public String getData9() {
         return this.data9;
     }
@@ -94,8 +92,6 @@ public class Analyse implements java.io.Serializable {
     public void setData9(String data9) {
         this.data9 = data9;
     }
-
-    @Column(name = "data10", nullable = false)
 
     public String getData10() {
         return this.data10;
@@ -105,8 +101,6 @@ public class Analyse implements java.io.Serializable {
         this.data10 = data10;
     }
 
-    @Column(name = "data11", nullable = false)
-
     public String getData11() {
         return this.data11;
     }
@@ -114,8 +108,6 @@ public class Analyse implements java.io.Serializable {
     public void setData11(String data11) {
         this.data11 = data11;
     }
-
-    @Column(name = "data12", nullable = false)
 
     public String getData12() {
         return this.data12;
@@ -125,8 +117,6 @@ public class Analyse implements java.io.Serializable {
         this.data12 = data12;
     }
 
-    @Column(name = "location", nullable = false, length = 1000)
-
     public String getLocation() {
         return this.location;
     }
@@ -135,8 +125,6 @@ public class Analyse implements java.io.Serializable {
         this.location = location;
     }
 
-    @Column(name = "dna", nullable = false, length = 1000)
-
     public String getDna() {
         return this.dna;
     }
@@ -144,8 +132,6 @@ public class Analyse implements java.io.Serializable {
     public void setDna(String dna) {
         this.dna = dna;
     }
-
-    @Column(name = "u_dna", nullable = false, length = 1000)
 
     public String getUDna() {
         return this.UDna;

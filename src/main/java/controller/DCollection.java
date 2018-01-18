@@ -85,6 +85,7 @@ public class DCollection {
 //            DefectAnalyseService defectAnalyse = new DefectAnalyse(path, start, end, tv1, tv2);
 //            defectAnalyse.getAnalyseResult();
 
+//            System.out.println("开始判断测序");
 
             SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(path, start, end);
             String checkResult = sequenceFileCheck.checkGeneFileIsNormal();
