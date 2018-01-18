@@ -86,11 +86,14 @@ public class input {
         double tv2 = 0.5;  //疑似双峰阈值
 
         SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(mFile.getAbsolutePath(), start, end);
-        if (!sequenceFileCheck.checkGeneFileIsNormal()) {
+        String checkResult = sequenceFileCheck.checkGeneFileIsNormal();
+        if (checkResult.equals("fail")) {
             System.out.println("sequence file error!!!!");
             AnalyseResult analyseResult = new AnalyseResult(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1]);
             AnalyseDao analyseDao = new AnalyseDaoImpl();
             analyseDao.saveAnalyseResultRes(analyseResult);
+        } else if (checkResult.equals("headFail")) {
+            //TODO
         } else {
 
             DefectAnalyseService defectAnalyse = new DefectAnalyse(mFile.getAbsolutePath(), start, end, tv1, tv2);
