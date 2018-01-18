@@ -102,35 +102,39 @@ public class DefectAnalyse implements DefectAnalyseService {
 
     private void checkSinglePeak(){
         int leng=locations.length;
+        char LPLGene[]=LPL.toCharArray();
         int real_pos=0;
-        int seq_pos=0;
+        int seq_pos=20;
         String result="";
-        while(seq_pos<leng){
-            real_pos=getLocations(seq_pos);
+        String head="";
+
+        while(seq_pos+20<leng){
+            int l=seq_pos+20;
+            while(seq_pos<l){
+                head+=locations[seq_pos];
+                seq_pos++;
+            }
+            real_pos=LPL.indexOf(head);
             if(real_pos>=0){
+                seq_pos-=20;
                 break;
             }
-            seq_pos++;
+            head="";
         }
         if(real_pos<0){
+            System.out.println("=================NOT FOUND=============");
             return;
         }
-        int i=0;
-        char LPLGene[]=LPL.toCharArray();
-        while(i<seq_pos){
-            result+=i+":"+LPLGene[real_pos-seq_pos+i]+"=>"+locations[i]+";";
-            locations[i]=LPLGene[real_pos-seq_pos+i]+"";
-            i++;
-        }
-        int j=real_pos;
-        i=seq_pos;
-        while(i<leng){
-            if(!locations[i].equals(""+LPLGene[j])){
-                result+=i+":"+LPLGene[j]+"=>"+locations[i]+";";
-                locations[i]=LPLGene[j]+"";
+        real_pos=real_pos-(seq_pos-20);
+        seq_pos=20;
+
+        while(seq_pos<leng){
+            if(!locations[seq_pos].equals(""+LPLGene[real_pos])){
+                result+=seq_pos+":"+LPLGene[real_pos]+"=>"+locations[seq_pos]+";";
+                locations[seq_pos]=LPLGene[real_pos]+"";
             }
-            i++;
-            j++;
+            seq_pos++;
+            real_pos++;
         }
         dataMap.put("single_peak_info", util.deleteEnd(result));
     }
