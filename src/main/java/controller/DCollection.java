@@ -87,12 +87,17 @@ public class DCollection {
 
 
             SequenceFileCheck sequenceFileCheck = new SequenceFileCheckImpl(path, start, end);
-            if (!sequenceFileCheck.checkGeneFileIsNormal()) {
+            String checkResult = sequenceFileCheck.checkGeneFileIsNormal();
+            if (checkResult.equals("fail")) {
+                // 测序失败
                 System.out.println("sequence file error!!!!");
                 AnalyseResult analyseResult = new AnalyseResult(path.split("/")[path.split("/").length - 1]);
                 AnalyseDao analyseDao = new AnalyseDaoImpl();
                 analyseDao.saveAnalyseResultRes(analyseResult);
                 return "";
+            } else if (checkResult.equals("headFail")) {
+                // 头部混乱
+                System.out.println("head error!!!!");
             }
 
 

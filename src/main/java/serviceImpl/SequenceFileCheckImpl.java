@@ -25,15 +25,17 @@ public class SequenceFileCheckImpl implements SequenceFileCheck {
     }
 
     @Override
-    public boolean checkGeneFileIsNormal() {
+    public String checkGeneFileIsNormal() {
         getGeneInfo();
 
         if (checkPeakNumsError()) {
-            return false;
-        } else if (checkPeakRangeError()) {
-            return false;
+            return "fail";
+        } else if (checkPeakRangeError().equals("fail")) {
+            return "fail";
+        } else if (checkPeakRangeError().equals("headFail")) {
+            return "headFail";
         } else {
-            return true;
+            return "success";
         }
 
     }
@@ -58,7 +60,7 @@ public class SequenceFileCheckImpl implements SequenceFileCheck {
      *
      * @return
      */
-    private boolean checkPeakRangeError() {
+    private String checkPeakRangeError() {
 
         int round = GValues.length / location.length / 2;
         ArrayList<Integer> peakPositions = new ArrayList<>();
@@ -77,9 +79,15 @@ public class SequenceFileCheckImpl implements SequenceFileCheck {
 
         // 计算峰之间的间距 因为头部不稳定，从第五个开始取
         ArrayList<Integer> peakRanges = new ArrayList<>();
-        for (int i = 6; i < peakPositions.size(); i++) {
-            peakRanges.add(peakPositions.get(i) - peakPositions.get(i - 1));
+        ArrayList<Integer> allPeakRanges = new ArrayList<>();
+
+        for (int i = 1; i < peakPositions.size(); i++) {
+            allPeakRanges.add(peakPositions.get(i) - peakPositions.get(i - 1));
+            if (i > 5) {
+                peakRanges.add(peakPositions.get(i) - peakPositions.get(i - 1));
+            }
         }
+
 
         System.out.println("peakRanges:");
         for (int p :
@@ -88,16 +96,27 @@ public class SequenceFileCheckImpl implements SequenceFileCheck {
         }
         System.out.println();
 
+        System.out.println("all-peakRanges:");
+        for (int p :
+                allPeakRanges) {
+            System.out.print(p + " ");
+        }
+        System.out.println();
+
         double variance = util.calVariance(peakRanges);
+        double allVariance = util.calVariance(allPeakRanges);
 
         System.out.println("variance: " + variance);
+        System.out.println("allVariance: " + allVariance);
 
-        //TODO 暂且认为峰值的间距的方差>30 判断为测序失败
+        //TODO 暂且认为去除头部后的峰值的间距的方差>30 判断为测序失败，如果所有峰值间距的方差>30，则为头部混乱
         if (variance > 30) {
-            return true;
+            return "fail";
+        } else if (variance <= 30 && allVariance > 30) {
+            return "headFail";
         }
 
-        return false;
+        return "success";
     }
 
     /**
