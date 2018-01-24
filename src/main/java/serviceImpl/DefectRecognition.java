@@ -34,9 +34,11 @@ public class DefectRecognition implements DefectRecognitionService {
 
     public String getMissGeneSort(Map<String, String> dataMap) {
         String la = dataMap.get("N_DNA");
-        String SFInfo = dataMap.get("sf_info");
+        String SFInfo = dataMap.get("sf_info") + ";" + dataMap.get("smallPeakInfo");
+        System.out.println("========================");
         System.out.println("-----------双峰信息----------: " + SFInfo);
         System.out.println("-----------正常DNA序列----------: " + la);
+        System.out.println("========================");
         String[] locations = la.split("");
         String res = dataMap.get("yc") + ";" + dataMap.get("ys");
         String[] temp = res.split(";");
@@ -45,6 +47,9 @@ public class DefectRecognition implements DefectRecognitionService {
         for (int i = 0; i < temp.length; i++) {
             nums[i] = Integer.valueOf(temp[i]) - 1;
         }
+
+//        res =
+
         Arrays.sort(nums);
 
         for (int i = 0; i < nums.length; i++) {
@@ -139,12 +144,11 @@ public class DefectRecognition implements DefectRecognitionService {
                 System.out.println("cf: " + cf);
             }
 
-            List<Integer> positions = util.getAllPlaces(standardDna, cf);
-            for (int j = 0; j < positions.size(); j++) {
-                System.out.print(positions.get(j) + ";");
-            }
-            System.out.println();
-//            System.out.println("===============");
+//            List<Integer> positions = util.getAllPlaces(standardDna, cf);
+//            for (int j = 0; j < positions.size(); j++) {
+//                System.out.print(positions.get(j) + ";");
+//            }
+//            System.out.println();
         }
         int eindex = standardDna.indexOf(cf);
         System.out.println("正常的20位：" + ckString);
@@ -216,7 +220,9 @@ public class DefectRecognition implements DefectRecognitionService {
 
     @Override
     public Map<String, String> getAnalyseRes(int start, int end, double tv1, double tv2) {
-        tv2 = 0.1;
+        // todo
+//        tv2 = 0.1;
+
         dataMap = dataAc.getAllData();
         String r1 = "";
         String r2 = "";
@@ -231,6 +237,7 @@ public class DefectRecognition implements DefectRecognitionService {
         //正常的DNA序列
         String N_DNA = "";
         String doublePeakInfo = ""; //双峰信息 原变量名为SFInfo
+        String smallPeakInfo = "";
 
         for (int n = 0; n < DNA.length; n++) {
             N_DNA += DNA[n];
@@ -240,6 +247,7 @@ public class DefectRecognition implements DefectRecognitionService {
 
         ArrayList<Integer> confirmedDoublePeak = new ArrayList<Integer>(); //确认双峰异常 原变量名为：yc
         ArrayList<Integer> suspectedDoublePeak = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
+        ArrayList<Integer> smallPeak = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
         ArrayList<Integer> sequencingError = new ArrayList<Integer>(); //疑似双峰异常 原变量名为：ys
         int round = 6;
 //        for (int i = 1; i < location.length; i++) {
@@ -250,6 +258,7 @@ public class DefectRecognition implements DefectRecognitionService {
 //        }
 //        round = Math.min(round, data11.length / location.length / 2);
 //        round = Math.min(round, data12.length / location.length / 2);
+
         System.out.println(round);
 
         Map<String, String> channelMap = new HashMap<String, String>();
@@ -260,21 +269,10 @@ public class DefectRecognition implements DefectRecognitionService {
 
         for (int i = start; i < location.length - end; i++) {
             List<Map.Entry<String, Integer>> curValues = getTwoLargerValue(channelMap, data9, data10, data11, data12, location, i, round);
-            List<Map.Entry<String, Integer>> preValues = getTwoLargerValue(channelMap, data9, data10, data11, data12, location, i - 1, round);
-            List<Map.Entry<String, Integer>> postValues = getTwoLargerValue(channelMap, data9, data10, data11, data12, location, i + 1, round);
-
             Map.Entry<String, Integer> e1 = curValues.get(0);
-            Map.Entry<String, Integer> preE1 = getSameKeyMapEntry(e1, preValues);
-            Map.Entry<String, Integer> postE1 = getSameKeyMapEntry(e1, postValues);
-
             Map.Entry<String, Integer> e2 = curValues.get(1);
-            Map.Entry<String, Integer> preE2 = getSameKeyMapEntry(e2, preValues);
-            Map.Entry<String, Integer> postE2 = getSameKeyMapEntry(e2, postValues);
-
             double n1 = e1.getValue();
             double n2 = e2.getValue();
-
-
 
 //            System.out.println("===================");
 //            System.out.println("i: " + i);
@@ -286,12 +284,12 @@ public class DefectRecognition implements DefectRecognitionService {
 
             //该值用于判断双峰是否由背景值过高造成
             double tv3 = 0.2;
-//            boolean isSlope1 = false;
-//            boolean isSlope2 = false;
+
+            //该值用于判断连续双峰中部分另一峰值较低的背景峰
+            double tv4 = 0.1;
+
 
             if (n1 > 0 && n2 > 0) {
-//                if (n1 >= preN1 && n2 >= preN2 && n1 >= postN1 && n2 >= postN2) {
-//
                 if (n2 / n1 > tv2) {
                     if (isSlope(e1, data9, data10, data11, data12, location, i) ||
                             isSlope(e2, data9, data10, data11, data12, location, i)) {
@@ -308,9 +306,11 @@ public class DefectRecognition implements DefectRecognitionService {
                     suspectedDoublePeak.add(i);
                     doublePeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
                     r2 += (i + 1 + ";");
+                } else if (n2 / n1 < tv2 && n2 / n1 > tv4) {
+                    smallPeak.add(i);
+                    smallPeakInfo += (i + 1 + ":" + e1.getKey() + e2.getKey() + ";");
                 }
-
-//                }
+//                if (n2 / n1)
             } else {
                 if (Math.abs(n2) / Math.abs(n1) > tv3) {
                     sequencingError.add(i);
@@ -331,6 +331,11 @@ public class DefectRecognition implements DefectRecognitionService {
             sequencingErrorString += sequencingError.get(i) + 1 + ";";
         }
 
+        String smallPeakString = "";
+        for (int i = 0; i < smallPeak.size(); i++) {
+            smallPeakString += smallPeak.get(i) + 1 + ";";
+        }
+
         //deleteEnd 删除以;连接的数字组成的字符串最后一个;
         dataMap.put("yc", util.deleteEnd(r1));
         dataMap.put("ys", util.deleteEnd(r2));
@@ -338,6 +343,8 @@ public class DefectRecognition implements DefectRecognitionService {
         dataMap.put("N_DNA", N_DNA);
         dataMap.put("sf_info", util.deleteEnd(doublePeakInfo));
         dataMap.put("sequencingError", util.deleteEnd(sequencingErrorString));
+        dataMap.put("smallPeaks", util.deleteEnd(smallPeakString));
+        dataMap.put("smallPeakInfo", util.deleteEnd(smallPeakInfo));
 //        System.out.println(sequencingErrorString);
 
         return dataMap;
