@@ -345,7 +345,8 @@ public class DefectRecognition implements DefectRecognitionService {
         dataMap.put("sequencingError", util.deleteEnd(sequencingErrorString));
         dataMap.put("smallPeaks", util.deleteEnd(smallPeakString));
         dataMap.put("smallPeakInfo", util.deleteEnd(smallPeakInfo));
-//        System.out.println(sequencingErrorString);
+        System.out.println("sequence error:");
+        System.out.println(sequencingErrorString);
 
         return dataMap;
     }
