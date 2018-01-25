@@ -1,21 +1,13 @@
 package main.java.controller;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import main.java.dao.AnalyseDao;
 import main.java.daoImpl.AnalyseDaoImpl;
 import main.java.model.Analyse;
 import main.java.model.AnalyseResult;
-import main.java.service.DefectAnalyseService;
 import main.java.service.SequenceFileCheck;
-import main.java.serviceImpl.DefectAnalyse;
 import main.java.serviceImpl.DefectRecognition;
 import main.java.serviceImpl.SequenceFileCheckImpl;
+import net.sf.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import net.sf.json.JSONObject;
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @EnableAutoConfiguration
@@ -92,7 +87,7 @@ public class DCollection {
             if (checkResult.equals("fail")) {
                 // 测序失败
                 System.out.println("sequence file error!!!!");
-                AnalyseResult analyseResult = new AnalyseResult(path.split("/")[path.split("/").length - 1]);
+                AnalyseResult analyseResult = new AnalyseResult(path.split("/")[path.split("/").length - 1], 1);
                 AnalyseDao analyseDao = new AnalyseDaoImpl();
                 analyseDao.saveAnalyseResultRes(analyseResult);
                 return "";

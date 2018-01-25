@@ -89,13 +89,30 @@ public class input {
         String checkResult = sequenceFileCheck.checkGeneFileIsNormal();
         if (checkResult.equals("fail")) {
             System.out.println("sequence file error!!!!");
-            AnalyseResult analyseResult = new AnalyseResult(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1]);
+
+            // error = 1, failed file
+            AnalyseResult analyseResult = new AnalyseResult(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1], 1);
             AnalyseDao analyseDao = new AnalyseDaoImpl();
             analyseDao.saveAnalyseResultRes(analyseResult);
-        } else if (checkResult.equals("headFail")) {
-            //TODO
-        } else {
 
+        } else if (checkResult.equals("headFail")) {
+            // error = 2, head failed file
+            AnalyseResult analyseResult = new AnalyseResult(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1], 2);
+            AnalyseDao analyseDao = new AnalyseDaoImpl();
+            analyseDao.saveAnalyseResultRes(analyseResult);
+            DefectAnalyseService defectAnalyse = new DefectAnalyse(mFile.getAbsolutePath(), start, end, tv1, tv2);
+            Map<String, AnalyseResult> analyseResultMap = defectAnalyse.getAnalyseResult();
+
+            // 继续分析
+            for (Map.Entry<String, AnalyseResult> entry : analyseResultMap.entrySet()) {
+                AnalyseResult analyseResult2 = entry.getValue();
+                analyseResult2.setFileName(mFile.getAbsolutePath().split("/")[mFile.getAbsolutePath().split("/").length - 1]);
+
+                analyseDao = new AnalyseDaoImpl();
+                analyseDao.saveAnalyseResultRes(analyseResult2);
+            }
+
+        } else {
             DefectAnalyseService defectAnalyse = new DefectAnalyse(mFile.getAbsolutePath(), start, end, tv1, tv2);
             Map<String, AnalyseResult> analyseResultMap = defectAnalyse.getAnalyseResult();
 

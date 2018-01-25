@@ -1,9 +1,6 @@
 package main.java.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "analyse_result")
@@ -11,6 +8,8 @@ import javax.persistence.Table;
 public class AnalyseResult implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private int item;
 
     private String fileName;
 
@@ -61,7 +60,7 @@ public class AnalyseResult implements java.io.Serializable {
      *
      * @param fileName
      */
-    public AnalyseResult(String fileName) {
+    public AnalyseResult(String fileName, int error) {
         this.fileName = fileName;
         this.position = -1;
         this.realPosition = -1;
@@ -69,7 +68,11 @@ public class AnalyseResult implements java.io.Serializable {
         this.secretPosition = -1;
         this.area = "";
         this.changedInfo = "";
-        this.changedSecret = "failed file";
+        if (error == 1) {
+            this.changedSecret = "failed file";
+        } else if (error == 2) {
+            this.changedSecret = "head failed file";
+        }
     }
 
     /**
@@ -85,7 +88,7 @@ public class AnalyseResult implements java.io.Serializable {
         this.secretPosition = -1;
         this.area = "";
         this.changedInfo = "";
-        switch (error){
+        switch (error) {
             case 1:
                 this.changedSecret = "suspect: continued double peaks";
 //            case 2:
@@ -118,6 +121,16 @@ public class AnalyseResult implements java.io.Serializable {
     }
 
     @Id
+    @Column(name = "item", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public int getItem() {
+        return item;
+    }
+
+    public void setItem(int item) {
+        this.item = item;
+    }
+
     @Column(name = "file_name", nullable = false)
     public String getFileName() {
         return this.fileName;
