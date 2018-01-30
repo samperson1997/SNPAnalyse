@@ -39,6 +39,10 @@ public class DefectAnalyse implements DefectAnalyseService {
         List<String> changedList = new ArrayList<>();
         List<String> ycList = new ArrayList<>();
         List<String> singleList = new ArrayList<>();
+        boolean singleFound = true;
+        if (dataMap.get("single_peak_info").equals("")) {
+            singleFound = false;
+        }
         checkSinglePeak();
 
         // ycList 是确认异常的点位
@@ -84,59 +88,66 @@ public class DefectAnalyse implements DefectAnalyseService {
                 }
             }
 
-            for (int i = 0; i < singleList.size(); i++) {
-                AnalyseResult analyseResult = new AnalyseResult();
-                String items[] = singleList.get(i).split(":");
-                int pos = Integer.parseInt(items[0].split("-")[1]);
-                analyseResult.setPosition(pos);
-                int realPosition = Integer.parseInt(items[0].split("-")[0]);
-                analyseResult.setRealPosition(realPosition);
-                if (realPosition != -2) {
-                    startAnalyse(analyseResult, realPosition, items[1], pos);
-                    analyseResultMap.put(pos + "", analyseResult);
+            if (singleFound) {
+                for (int i = 0; i < singleList.size(); i++) {
+                    AnalyseResult analyseResult = new AnalyseResult();
+                    String items[] = singleList.get(i).split(":");
+                    String position[] = items[0].split("-");
+                    int pos = Integer.parseInt(position[1]);
+                    analyseResult.setPosition(pos);
+                    int realPosition = Integer.parseInt(position[0]);
+                    analyseResult.setRealPosition(realPosition);
+                    if (realPosition != -2) {
+                        startAnalyse(analyseResult, realPosition, items[1], pos);
+                        analyseResultMap.put(pos + "", analyseResult);
+                    }
                 }
             }
+
         }
         return analyseResultMap;
     }
 
-    private void checkSinglePeak(){
-        int leng=locations.length;
-        char LPLGene[]=LPL.toCharArray();
-        int real_pos=0;
-        int seq_pos=20;
-        String result="";
-        String head="";
+    private void checkSinglePeak() {
+        int leng = locations.length;
+        char LPLGene[] = LPL.toCharArray();
+        int real_pos = 0;
+        int seq_pos = 20;
+        String result = "";
+        String head = "";
 
-        while(seq_pos+20<leng){
-            int l=seq_pos+20;
-            while(seq_pos<l){
-                head+=locations[seq_pos];
+        while (seq_pos + 20 < leng) {
+            int l = seq_pos + 20;
+            while (seq_pos < l) {
+                head += locations[seq_pos];
                 seq_pos++;
             }
-            real_pos=LPL.indexOf(head);
-            if(real_pos>=0){
-                seq_pos-=20;
+            real_pos = LPL.indexOf(head);
+            if (real_pos >= 0) {
+                seq_pos -= 20;
                 break;
             }
-            head="";
+            head = "";
         }
-        if(real_pos<0){
+        if (real_pos < 0) {
             System.out.println("=================NOT FOUND=============");
             return;
         }
-        real_pos=real_pos-(seq_pos-20);
-        seq_pos=20;
+        real_pos = real_pos - (seq_pos - 20);
+        seq_pos = 20;
 
-        while(seq_pos<leng){
-            if(!locations[seq_pos].equals(""+LPLGene[real_pos])){
-                result+=(real_pos+1)+"-"+(seq_pos+1)+":"+LPLGene[real_pos]+"=>"+locations[seq_pos]+";";
-                locations[seq_pos]=LPLGene[real_pos]+"";
+        while (seq_pos < leng) {
+            if (!locations[seq_pos].equals("" + LPLGene[real_pos])) {
+                result += (real_pos + 1) + "-" + (seq_pos + 1) + ":" + LPLGene[real_pos] + "=>" + locations[seq_pos] + ";";
+                locations[seq_pos] = LPLGene[real_pos] + "";
             }
             seq_pos++;
             real_pos++;
         }
-        dataMap.put("single_peak_info", util.deleteEnd(result));
+        if (!result.equals("")) {
+            result = util.deleteEnd(result);
+        }
+        dataMap.put("single_peak_info", result);
     }
 
     private void startAnalyse(AnalyseResult analyseResult, int realPosition, String changedInformation, int position) {
@@ -272,17 +283,17 @@ public class DefectAnalyse implements DefectAnalyseService {
      */
     private int getCDSPosition(int realPosition) {
         if (realPosition < 0) {
-            return realPosition;
+            return -1;
         }
         int CDSPosition = 0;
         int count = 0;
         char gene[] = LPL.toCharArray();
         char cds[] = LPL_CDS.toCharArray();
-        int cursor=1;
+        int cursor = 1;
         for (int k = 0; k < realPosition; k++) {
             if (cds[CDSPosition + count] == gene[k]) {
                 count++;
-                if (k == realPosition-1) {
+                if (k == realPosition - 1) {
                     int u = 1;
                     while (count <= 20) {
                         if (cds[CDSPosition + count] == gene[k + u]) {
@@ -293,27 +304,25 @@ public class DefectAnalyse implements DefectAnalyseService {
                         }
                     }
                     if (count < 20) {
-                        CDSPosition = 0;
+                        CDSPosition = -1;
                     } else {
                         CDSPosition += count;
                     }
 
                 }
-            }
-            else {
-                if (k == realPosition-1) {
+            } else {
+                if (k == realPosition - 1) {
                     CDSPosition = -1;
-                }
-                if (count > 20) {
-                    CDSPosition += count;
-                }
-                else{
-                    if(count>0){
-                        k=cursor;
-                        cursor++;
+                } else {
+                    if (count > 20) {
+                        CDSPosition += count;
+                    } else {
+                        if (count > 0) {
+                            k = cursor;
+                            cursor++;
+                        }
                     }
                 }
-
                 count = 0;
             }
         }
@@ -360,3 +369,4 @@ public class DefectAnalyse implements DefectAnalyseService {
     }
 
 }
+
