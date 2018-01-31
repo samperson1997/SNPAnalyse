@@ -103,7 +103,7 @@ public class DefectRecognition implements DefectRecognitionService {
 
         //匹配标准DNA序列
 //        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
-        String standardDna = new GeneDaoImpl().searchGeneByType("LMF").getSort();
+        String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
         standardDna = standardDna.toUpperCase();
 //        System.out.println(standardDna);
         //匹配在序列中的位置
