@@ -72,11 +72,11 @@ public class input {
         AnalyseDao analyseDao = new AnalyseDaoImpl();
         analyseDao.saveAnalyseRes(analyse);
 
-//            if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
-//                String lack = defectRecognition.getMissGeneSort(dm);
-//                System.out.println("-----lack-------: " + lack);
-//                dm.put("lack_gene", lack);
-//            }
+        if ((dm.get("yc") + ";" + dm.get("ys")).split(";").length > 20) {
+            String lack = defectRecognition.getMissGeneSort(dm);
+            System.out.println("-----lack-------: " + lack);
+            dm.put("lack_gene", lack);
+        }
     }
 
     private static void defectAnalyseTest(File mFile) {

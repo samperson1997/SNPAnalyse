@@ -97,6 +97,17 @@ public class AnalyseResult implements java.io.Serializable {
 
     }
 
+    public AnalyseResult(String lackGene) {
+        this.fileName = "";
+        this.position = -1;
+        this.realPosition = -1;
+        this.CDSPosition = -1;
+        this.secretPosition = -1;
+        this.area = "";
+        this.changedInfo = "";
+        this.changedSecret = "lackGene: " + lackGene;
+    }
+
     public AnalyseResult(int position, int realPosition, int CDSPosition, int secretPosition, String area, String changedInfo, String changedSecret) {
         this.position = position;
         this.realPosition = realPosition;
