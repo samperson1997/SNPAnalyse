@@ -27,6 +27,13 @@ public class DefectAnalyse implements DefectAnalyseService {
     public DefectAnalyse(String path, int start, int end, double tv1, double tv2) {
         DefectRecognition defectRecognition = new DefectRecognition(path);
         dataMap = defectRecognition.getAnalyseRes(start, end, tv1, tv2);
+
+        if ((dataMap.get("yc") + ";" + dataMap.get("ys")).split(";").length > 20) {
+            String lack = defectRecognition.getMissGeneSort(dataMap);
+            System.out.println("-----lack-------: " + lack);
+            dataMap.put("lack_gene", lack);
+        }
+
         analyseDao = new AnalyseDaoImpl();
         U_DNA = dataMap.get("U_DNA");
         locations = dataMap.get("N_DNA").split("");
@@ -38,21 +45,27 @@ public class DefectAnalyse implements DefectAnalyseService {
         Map<String, AnalyseResult> analyseResultMap = new HashMap<>();
         List<String> changedList = new ArrayList<>();
         List<String> ycList = new ArrayList<>();
-        List<String> singleList = new ArrayList<>();
-        boolean singleFound = true;
-        if (dataMap.get("single_peak_info").equals("")) {
-            singleFound = false;
-        }
-        checkSinglePeak();
+//        List<String> singleList = new ArrayList<>();
+//        boolean singleFound = true;
+//        if (dataMap.get("single_peak_info").equals("")) {
+//            singleFound = false;
+//        }
+//        checkSinglePeak();
 
         // ycList 是确认异常的点位
         ycList.addAll(Arrays.asList(dataMap.get("yc").split(";")));
-        singleList.addAll(Arrays.asList(dataMap.get("single_peak_info").split(";")));
 
-        if (ycList.size() > 20 || singleList.size() > 20) {
-            AnalyseResult analyseResult = new AnalyseResult(1);
-            analyseResultMap.put("", analyseResult);
-        } else {
+
+//        singleList.addAll(Arrays.asList(dataMap.get("single_peak_info").split(";")));
+
+//        if (ycList.size() > 20 || singleList.size() > 20) {
+//            AnalyseResult analyseResult = new AnalyseResult(1);
+//            analyseResultMap.put("", analyseResult);
+//        } else {
+
+
+        if (dataMap.get("lack_gene") == null || dataMap.get("lack_gene").equals("")) {
+
             for (int i = 0; i < dataMap.get("sf_info").split(";").length; i++) {
                 // 查看双峰点位是不是在确认异常的点位
                 String sf_info = dataMap.get("sf_info").split(";")[i].split(":")[0];
@@ -81,31 +94,37 @@ public class DefectAnalyse implements DefectAnalyseService {
                     // -2表示出现N, 一般出现在结果的前10个或后10个碱基
                     // 这个位置由于测序方法的问题, 会导致前后端无法测序准确, 可以直接跳过
                     if (realPosition != -2) {
-                        String changedInformation = changedInfo[1].charAt(1) + "=>" + changedInfo[1].charAt(0);
+                        String changedInformation = changedInfo[1].charAt(0) + "=>" + changedInfo[1].charAt(1);
                         startAnalyse(analyseResult, realPosition, changedInformation, position);
                         analyseResultMap.put(changedInfo[0], analyseResult);
                     }
                 }
             }
 
-            if (singleFound) {
-                for (int i = 0; i < singleList.size(); i++) {
-                    AnalyseResult analyseResult = new AnalyseResult();
-                    String items[] = singleList.get(i).split(":");
-                    String position[] = items[0].split("-");
-                    int pos = Integer.parseInt(position[1]);
-                    analyseResult.setPosition(pos);
-                    int realPosition = Integer.parseInt(position[0]);
-                    analyseResult.setRealPosition(realPosition);
-                    if (realPosition != -2) {
-                        startAnalyse(analyseResult, realPosition, items[1], pos);
-                        analyseResultMap.put(pos + "", analyseResult);
-                    }
-                }
-            }
-
+//            if (singleFound) {
+//                for (int i = 0; i < singleList.size(); i++) {
+//                    AnalyseResult analyseResult = new AnalyseResult();
+//                    String items[] = singleList.get(i).split(":");
+//                    String position[] = items[0].split("-");
+//                    int pos = Integer.parseInt(position[1]);
+//                    analyseResult.setPosition(pos);
+//                    int realPosition = Integer.parseInt(position[0]);
+//                    analyseResult.setRealPosition(realPosition);
+//                    if (realPosition != -2) {
+//                        startAnalyse(analyseResult, realPosition, items[1], pos);
+//                        analyseResultMap.put(pos + "", analyseResult);
+//                    }
+//                }
+//            }
+//
+//        }
+        } else {
+            AnalyseResult analyseResult = new AnalyseResult(dataMap.get("lack_gene"));
+            analyseResultMap.put("", analyseResult);
         }
+
         return analyseResultMap;
+
     }
 
     private void checkSinglePeak() {
@@ -183,19 +202,24 @@ public class DefectAnalyse implements DefectAnalyseService {
             String U_secret = ""; // 异常密码子
             String N_secret = ""; // 正常密码子
 
+            // 因为代码计数从0开始，CDS序列计数从1开始，所以必须纠正误差
+            int CDSPointer = CDSPosition - 1;
+
             boolean isWrongResult = false;
             // 余数为0，向前拼接两位碱基构成密码子
             if (CDSPosition % 3 == 0) {
                 if (CDSPosition < 2) {
                     isWrongResult = true;
                 } else {
-                    N_secret = LPL_CDS.substring(CDSPosition - 2, CDSPosition + 1);
+                    N_secret = LPL_CDS.substring(CDSPointer - 2, CDSPointer + 1);
 
                     // 求U_secret
                     int cnt = 1;
                     U_secret = changedInformation.substring(3);
                     for (int j = position - 2; j > 0; j--) {
-                        if (getCDSPosition(getLocations(j)) != -1) {
+                        int jRealPosition = realPosition + j - position;
+
+                        if (getCDSPosition(jRealPosition) != -1) {
                             cnt++;
                             U_secret = U_DNA.substring(j, j + 1) + U_secret;
                         }
@@ -211,13 +235,16 @@ public class DefectAnalyse implements DefectAnalyseService {
                 if (CDSPosition < 0) {
                     isWrongResult = true;
                 } else {
-                    N_secret = LPL_CDS.substring(CDSPosition, CDSPosition + 3);
+                    N_secret = LPL_CDS.substring(CDSPointer, CDSPointer + 3);
 
                     // 求U_secret
                     int cnt = 1;
                     U_secret = changedInformation.substring(3);
-                    for (int j = position; j < U_DNA.length(); j++) {
-                        if (getCDSPosition(getLocations(j)) != -1) {
+
+                    for (int j = position + 1; j < U_DNA.length(); j++) {
+                        int jRealPosition = realPosition + j - position;
+
+                        if (getCDSPosition(jRealPosition) != -1) {
                             cnt++;
                             U_secret += U_DNA.substring(j, j + 1);
                         }
@@ -235,18 +262,22 @@ public class DefectAnalyse implements DefectAnalyseService {
                 if (CDSPosition < 1) {
                     isWrongResult = true;
                 } else {
-                    N_secret = LPL_CDS.substring(CDSPosition - 1, CDSPosition + 2);
+                    N_secret = LPL_CDS.substring(CDSPointer - 1, CDSPointer + 2);
 
                     // 求U_secret
                     U_secret = changedInformation.substring(3);
                     for (int j = position - 2; j > 0; j--) {
-                        if (getCDSPosition(getLocations(j)) != -1) {
+                        int jRealPosition = realPosition + j - position;
+
+                        if (getCDSPosition(jRealPosition) != -1) {
                             U_secret = U_DNA.substring(j, j + 1) + U_secret;
                             break;
                         }
                     }
                     for (int j = position; j < U_DNA.length(); j++) {
-                        if (getCDSPosition(getLocations(j)) != -1) {
+                        int jRealPosition = realPosition + j - position;
+
+                        if (getCDSPosition(jRealPosition) != -1) {
                             U_secret += U_DNA.substring(j, j + 1);
                             break;
                         }
@@ -260,7 +291,9 @@ public class DefectAnalyse implements DefectAnalyseService {
             if (isWrongResult) {
                 analyseResult.setChangedSecret("analyse failed");
             } else {
-                if (analyseDao.getSecret(U_secret) == null) {
+                if (U_secret.contains("N")) {
+                    analyseResult.setChangedSecret("failed nearby");
+                } else if (analyseDao.getSecret(U_secret) == null) {
                     analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getSim_name() + "=>unknown amino acid");
                 } else {
                     analyseResult.setChangedSecret(analyseDao.getSecret(N_secret).getSim_name() + "=>"
@@ -291,6 +324,10 @@ public class DefectAnalyse implements DefectAnalyseService {
         char cds[] = LPL_CDS.toCharArray();
         int cursor = 1;
         for (int k = 0; k < realPosition; k++) {
+            if (CDSPosition + count >= cds.length) {
+                CDSPosition = -1;
+                break;
+            }
             if (cds[CDSPosition + count] == gene[k]) {
                 count++;
                 if (k == realPosition - 1) {
@@ -356,10 +393,6 @@ public class DefectAnalyse implements DefectAnalyseService {
         standardDna = standardDna.toUpperCase();
         //匹配在序列中的位置
         int sindex = standardDna.indexOf(gs);
-
-//        System.out.println("========================");
-//        System.out.println(sindex);
-//        System.out.println("========================");
 
         if (sindex == -1) { //匹配失败
             return -1;
