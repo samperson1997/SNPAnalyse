@@ -1,0 +1,58 @@
+package main.java.serviceImpl.compbio.misc;
+
+import java.util.Random;
+
+public class DNAGenerator {
+
+    private char[] nucleotides = new char[]{'A', 'C', 'G', 'T'};
+    private Random r = new Random();
+
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        DNAGenerator dNAGenerator = new DNAGenerator();
+        String ancestor = dNAGenerator.generate(8);
+        String descendant1 = dNAGenerator.mutate(ancestor, 2);
+        String descendant2 = dNAGenerator.mutate(ancestor, 2);
+        System.out.println("Ancestor:   " + ancestor);
+        System.out.println("Descendant: " + descendant1);
+        System.out.println("Descendant: " + descendant2);
+    }
+
+    private String generate(int length) {
+        StringBuilder buf = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char randNucleotide = getRandNucleotide();
+            buf.append(randNucleotide);
+        }
+
+        return buf.toString();
+    }
+
+    private char getRandNucleotide() {
+        int randInt = r.nextInt(4);
+        return nucleotides[randInt];
+    }
+
+    private String mutate(String dNA, int mutationCount) {
+        StringBuilder mutatedBuf = new StringBuilder(dNA);
+        for (int i = 0; i < mutationCount; i++) {
+            double rand = r.nextDouble();
+            int randIndex = r.nextInt(mutatedBuf.length());
+            if (rand < 0.5) {
+                // do mutation
+                mutatedBuf.replace(randIndex, randIndex + 1, ""
+                        + getRandNucleotide());
+            } else if (rand < 0.75) {
+                // do insertion
+                mutatedBuf.insert(randIndex, getRandNucleotide());
+            } else {
+                // do deletion
+                mutatedBuf.deleteCharAt(randIndex);
+            }
+        }
+
+        return mutatedBuf.toString();
+    }
+}
