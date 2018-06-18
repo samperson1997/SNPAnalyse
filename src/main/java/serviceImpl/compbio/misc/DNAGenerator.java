@@ -21,7 +21,7 @@ public class DNAGenerator {
     }
 
     private String generate(int length) {
-        StringBuilder buf = new StringBuilder(length);
+        StringBuffer buf = new StringBuffer(length);
         for (int i = 0; i < length; i++) {
             char randNucleotide = getRandNucleotide();
             buf.append(randNucleotide);
@@ -36,7 +36,7 @@ public class DNAGenerator {
     }
 
     private String mutate(String dNA, int mutationCount) {
-        StringBuilder mutatedBuf = new StringBuilder(dNA);
+        StringBuffer mutatedBuf = new StringBuffer(dNA);
         for (int i = 0; i < mutationCount; i++) {
             double rand = r.nextDouble();
             int randIndex = r.nextInt(mutatedBuf.length());

@@ -5,8 +5,8 @@ public abstract class DynamicProgramming {
    protected String sequence1;
    protected String sequence2;
    protected Cell[][] scoreTable;
-   private boolean tableIsFilledIn;
-   private boolean isInitialized;
+   protected boolean tableIsFilledIn;
+   protected boolean isInitialized;
 
    public DynamicProgramming(String sequence1, String sequence2) {
       this.sequence1 = sequence1;
@@ -62,7 +62,7 @@ public abstract class DynamicProgramming {
    protected abstract void fillInCell(Cell currentCell, Cell cellAbove,
          Cell cellToLeft, Cell cellAboveLeft);
 
-   private void fillIn() {
+   protected void fillIn() {
       for (int row = 1; row < scoreTable.length; row++) {
          for (int col = 1; col < scoreTable[row].length; col++) {
             Cell currentCell = scoreTable[row][col];

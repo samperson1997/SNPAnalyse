@@ -24,8 +24,8 @@ public abstract class SequenceAlignment extends DynamicProgramming {
     }
 
     protected Object getTraceback() {
-        StringBuilder align1Buf = new StringBuilder();
-        StringBuilder align2Buf = new StringBuilder();
+        StringBuffer align1Buf = new StringBuffer();
+        StringBuffer align2Buf = new StringBuffer();
         Cell currentCell = getTracebackStartingCell();
         while (traceBackIsNotDone(currentCell)) {
             if (currentCell.getRow() - currentCell.getPrevCell().getRow() == 1) {
