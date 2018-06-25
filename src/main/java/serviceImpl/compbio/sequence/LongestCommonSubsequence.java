@@ -91,9 +91,7 @@ public class LongestCommonSubsequence extends DynamicProgramming {
         Cell currentCell = scoreTable[scoreTable.length - 1][scoreTable[0].length - 1];
         while (currentCell.getScore() > 0) {
             Cell prevCell = currentCell.getPrevCell();
-            if ((currentCell.getRow() - prevCell.getRow() == 1 && currentCell
-                    .getCol()
-                    - prevCell.getCol() == 1)
+            if ((currentCell.getRow() - prevCell.getRow() == 1 && currentCell.getCol() - prevCell.getCol() == 1)
                     && currentCell.getScore() == prevCell.getScore() + 1) {
                 lCSBuf.insert(0, sequence1.charAt(currentCell.getCol() - 1));
             }

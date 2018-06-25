@@ -94,7 +94,7 @@ public class DefectAnalyse implements DefectAnalyseService {
                     // -2表示出现N, 一般出现在结果的前10个或后10个碱基
                     // 这个位置由于测序方法的问题, 会导致前后端无法测序准确, 可以直接跳过
                     if (realPosition != -2) {
-                        String changedInformation = changedInfo[1].charAt(0) + "=>" + changedInfo[1].charAt(1);
+                        String changedInformation = changedInfo[1].charAt(1) + "=>" + changedInfo[1].charAt(0);
                         startAnalyse(analyseResult, realPosition, changedInformation, position);
                         analyseResultMap.put(changedInfo[0], analyseResult);
                     }
@@ -286,6 +286,9 @@ public class DefectAnalyse implements DefectAnalyseService {
                     System.out.println(position + ": CDSPosition % 3 == 2");
                 }
             }
+
+            System.out.println("U:::::::::::" + U_secret);
+            System.out.println("N:::::::::::" + LPL_CDS.substring(CDSPointer - 2));
 
             // 找密码子对应的氨基酸
             if (isWrongResult) {
