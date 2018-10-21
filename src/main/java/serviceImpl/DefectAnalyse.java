@@ -181,7 +181,11 @@ public class DefectAnalyse implements DefectAnalyseService {
          * 氨基酸变化位置
          */
 
-        analyseResult.setSecretPosition(CDSPosition / 3);
+        if (CDSPosition / 3 == 0) {
+            analyseResult.setSecretPosition(CDSPosition / 3);
+        } else {
+            analyseResult.setSecretPosition(CDSPosition / 3 + 1);
+        }
 
         /*
          * 异常所在DNA片段区域

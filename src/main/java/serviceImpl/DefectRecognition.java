@@ -102,8 +102,6 @@ public class DefectRecognition implements DefectRecognitionService {
         System.out.println("连续双峰起始处的前20位碱基序列 " + gs);
 
         //匹配标准DNA序列
-//        String standardDna = new GeneDaoImpl().searchGeneByType("APOA5").getSort();
-//        String standardDna = new GeneDaoImpl().searchGeneByType("APOC2").getSort();
         String standardDna = new GeneDaoImpl().searchGeneByType("LPL").getSort();
         standardDna = standardDna.toUpperCase();
 //        System.out.println(standardDna);
